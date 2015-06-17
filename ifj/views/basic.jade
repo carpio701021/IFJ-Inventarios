@@ -1,0 +1,40 @@
+doctype html
+html
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/basic-style.css')
+		meta(name='viewport', content='width=device-width,', initial-scale='1')
+		block scripts
+	
+	body
+		#cssmenu
+			ul#menulu
+				li#logoli.client
+					span #{nombre_cliente}
+
+				block inicioli
+					li#inicioli
+						a(href='/')
+							span Inicio
+					|	
+				block gruposli
+					li#gruposli
+						a(href='/grupos')
+							span Grupos
+					|	
+				block productosli
+					li#productosli
+						a(href='/productos')
+							span Productos
+					|	
+				block contactoli
+					li#contactoli
+						a(href='/contacto')
+							span Contacto
+					|	
+				block logoutli
+					li#logoutli.last
+						a(href='/logout')
+							span Cerrar Sesión
+
+		block content

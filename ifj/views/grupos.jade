@@ -1,0 +1,110 @@
+extends basic	
+
+block scripts
+	script.
+		var lgrupos = !{grupos};
+		
+		var cargarLista = function(){
+			var htmlDelListadoDeGrupos='<Table>';
+			htmlDelListadoDeGrupos+='<tr> <td>Código</td> <td>Descripción</td> <td></td> </tr>';
+			for(gr in lgrupos){
+				htmlDelListadoDeGrupos+='<tr onClick=\'clickEnUnGrupo('+lgrupos[gr].Codigo+')\'>';
+				htmlDelListadoDeGrupos+='<td>' + lgrupos[gr].Codigo + '</td>'; 
+				htmlDelListadoDeGrupos+='<td> <p>Descripción: ' + (lgrupos[gr].Descripcion || '-Sin descripcion-' );
+				htmlDelListadoDeGrupos+='<p>Cueta contable: ' + (lgrupos[gr].Cuenta_Contable || '-No establecido-');
+				htmlDelListadoDeGrupos+='<p>Estado: ' + (lgrupos[gr].Estado || '-No establecido-') + '</td>' ;
+				htmlDelListadoDeGrupos+='<td><input type="radio" name="grupo" id="ri'+lgrupos[gr].Codigo+'" value="'+lgrupos[gr].Codigo+'"></td>';
+				htmlDelListadoDeGrupos+='</tr>';
+			}
+			htmlDelListadoDeGrupos+='</table>';
+
+			document.getElementById("divlistadogrupos").innerHTML = htmlDelListadoDeGrupos;
+		};
+		window.onload = cargarLista;
+
+		var grupoSeleccionado = -1;
+		var clickEnUnGrupo = function(codigo){
+			//alert('Hola neneco ' + codigo);
+			document.getElementById("ri"+codigo).checked = true;
+			document.getElementById("btnCambiar").focus();
+			grupoSeleccionado=codigo;
+		}
+
+		
+		var grupoSeleccionadof = function(){
+			alert("Es el "+grupoSeleccionado);
+			
+			//alert('document.getElementById("grupo").id');
+		}
+		
+block gruposli
+	li#gruposli.active
+		a(href='/grupos')
+			span Grupos
+
+
+
+block content
+	h2 Administración de grupos
+
+	section.container(style="max-width:260px")
+		form(name='login', action='/login/verify', method='POST', accept-charset='utf-8')
+			input(type='text', name='search_txt', placeholder='Buscar grupo', required='')
+			input(type='submit', value='Buscar')
+
+	p
+
+	section.container(style="max-width:90%;")
+		//float:center;overflow:hidden;
+		#botonesx(style="position:absolute;bottom:0;right:0;top:50%; right:50%; bottom:50%; left;overflow:auto")
+			input(type='submit', value='Cambiar', id='btnCambiar' onClick='grupoSeleccionadof()')
+			&nbsp;
+			input(type='submit', value='Borrar', id='btnBorrar' onClick='grupoSeleccionadof()')
+			&nbsp;
+			input(type='submit', value='Nuevo', id='btnNuevo' onClick='grupoSeleccionadof()')
+		h3 Todos los grupos
+		
+		
+		p
+		
+		div#divlistadogrupos.tabla_listado
+
+			
+
+		p
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+	p mas cosas
+		//-#{grupos}
