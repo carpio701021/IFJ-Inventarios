@@ -1,20 +1,25 @@
-extends basic	
+extends basic
 
 block scripts
 	script.
 		var lgrupos = !{grupos};
-		
+
 		var cargarLista = function(){
 			var htmlDelListadoDeGrupos='<Table>';
-			htmlDelListadoDeGrupos+='<tr> <td>Código</td> <td>Descripción</td> <td></td> </tr>';
+			htmlDelListadoDeGrupos+='<tr> <td>Código</td> <td>Descripción</td> </tr>';
 			for(gr in lgrupos){
-				htmlDelListadoDeGrupos+='<tr onClick=\'clickEnUnGrupo('+lgrupos[gr].Codigo+')\'>';
-				htmlDelListadoDeGrupos+='<td>' + lgrupos[gr].Codigo + '</td>'; 
-				htmlDelListadoDeGrupos+='<td> <p>Descripción: ' + (lgrupos[gr].Descripcion || '-Sin descripcion-' );
-				htmlDelListadoDeGrupos+='<p>Cueta contable: ' + (lgrupos[gr].Cuenta_Contable || '-No establecido-');
-				htmlDelListadoDeGrupos+='<p>Estado: ' + (lgrupos[gr].Estado || '-No establecido-') + '</td>' ;
-				htmlDelListadoDeGrupos+='<td><input type="radio" name="grupo" id="ri'+lgrupos[gr].Codigo+'" value="'+lgrupos[gr].Codigo+'"></td>';
-				htmlDelListadoDeGrupos+='</tr>';
+				htmlDelListadoDeGrupos
+					+='<tr>'
+					+'<td>'+lgrupos[gr].Codigo+'</td>'
+					+'<td><p>Descripción: '+(lgrupos[gr].Descripcion||'-Sin descripcion-') + '</p>'
+					+'<p>Cuenta contable: '+(lgrupos[gr].Cuenta_Contable||'-No establecido-')+ '</p>'
+					+'<p>Estado: '+(lgrupos[gr].Estado||'-No establecido-')+ '</p>'
+					+'<br></br>'
+					+'<input type="submit" value="Actualizar" style="width:45%" onClick="onClickBtnMostrarActualizarGrupo()"/>'
+					+'&nbsp;'
+					+'<input type="submit" value="Borrar" style="width:45%"/>'
+					+'</td>'
+					+'</tr>';
 			}
 			htmlDelListadoDeGrupos+='</table>';
 
@@ -22,21 +27,62 @@ block scripts
 		};
 		window.onload = cargarLista;
 
-		var grupoSeleccionado = -1;
-		var clickEnUnGrupo = function(codigo){
-			//alert('Hola neneco ' + codigo);
-			document.getElementById("ri"+codigo).checked = true;
-			document.getElementById("btnCambiar").focus();
-			grupoSeleccionado=codigo;
+		var onClickBtnMostrarTodosG = function(){
+			//ocultar y mostrar
+			seclistgrupos.style.display="block";
+			nuevoGrupo.style.display="none";
+			opciones.style.display="none";
+			actualizarGrupo.style.display="none";
 		}
 
-		
-		var grupoSeleccionadof = function(){
-			alert("Es el "+grupoSeleccionado);
-			
-			//alert('document.getElementById("grupo").id');
+		var onClickBtnMostrarMenu = function(){
+			//ocultar y mostrar
+			seclistgrupos.style.display="none";
+			nuevoGrupo.style.display="none";
+			opciones.style.display="block";
+			actualizarGrupo.style.display="none";
 		}
-		
+
+		var onClickBtnMostrarNuevoGrupo = function(){
+			//limpiar valores actuales
+			codigo_grupo_n.value="";
+			descripcion_grupo_n.value="";
+			cuenta_grupo_n.value="";
+			estado_grupo_n.value="";
+			//ocultar y mostrar
+			seclistgrupos.style.display="none";
+			nuevoGrupo.style.display="block";
+			opciones.style.display="none";
+			actualizarGrupo.style.display="none";
+
+		}
+
+		var onClickBtnMostrarActualizarGrupo = function(){
+			//limpiar valores actuales
+			codigo_grupo_a.value="";
+			descripcion_grupo_a.value="";
+			cuenta_grupo_a.value="";
+			estado_grupo_a.value="";
+			//ocultar y mostrar
+			seclistgrupos.style.display="none";
+			nuevoGrupo.style.display="none";
+			opciones.style.display="none";
+			actualizarGrupo.style.display="block";
+
+		}
+
+
+		var onClickBtnCancelarAgregarGrupo = function(){
+			if (confirm("¿Seguro desea cancelar operacion?\nAceptar = Sí")) {
+				//ocultar y mostrar
+				seclistgrupos.style.display="none";
+				nuevoGrupo.style.display="none";
+				opciones.style.display="block";
+				actualizarGrupo.style.display="none";
+			} 
+
+		}
+
 block gruposli
 	li#gruposli.active
 		a(href='/grupos')
@@ -45,66 +91,79 @@ block gruposli
 
 
 block content
+	p
 	h2 Administración de grupos
+	section#opciones.container(style="max-width:85%;padding:5px;text-align:center")
+		#btnsOpciones(style=" max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+			h3 Opciones
+			input(style="width:100%;",type='submit', value='Mostrar todos', id='btnMostrarTodos' onClick='onClickBtnMostrarTodosG()')
+			br
+			br
+			input(style="width:100%;",type='submit', value='Nuevo', id='btnNuevo' onClick='onClickBtnMostrarNuevoGrupo()')
+			p
+		p
+		#busquedas(style="max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+			h3 Busqueda
+			input(style="width:95%;",type='text', name='buscar_grupo', id='buscar_grupo', placeholder='buscar por código de grupo', required='')
+			br
+			input(type='radio', name='rdBuscar', id='rdBuscar_p_codigo', value='codigo', checked='' ,onClick='document.getElementById("buscar_grupo").placeholder="buscar por código de grupo";')
+			text por código
+			br
+			input(type='radio', name='rdBuscar', id='rdBuscar_p_descripcion', value='descripcion', onClick='document.getElementById("buscar_grupo").placeholder="buscar por descripción de grupo";')
+			text en descripcion
+			br
+			input(style="width:100%;",type='submit', value='Buscar')
 
-	section.container(style="max-width:260px")
-		form(name='login', action='/login/verify', method='POST', accept-charset='utf-8')
-			input(type='text', name='search_txt', placeholder='Buscar grupo', required='')
-			input(type='submit', value='Buscar')
+			br
+			br
+			br
 
 	p
 
-	section.container(style="max-width:90%;")
-		//float:center;overflow:hidden;
-		#botonesx(style="position:absolute;bottom:0;right:0;top:50%; right:50%; bottom:50%; left:50%;")
-			input(type='submit', value='Cambiar', id='btnCambiar' onClick='grupoSeleccionadof()')
-			&nbsp;
-			input(type='submit', value='Borrar', id='btnBorrar' onClick='grupoSeleccionadof()')
-			&nbsp;
-			input(type='submit', value='Nuevo', id='btnNuevo' onClick='grupoSeleccionadof()')
+	section#seclistgrupos.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
 		h3 Todos los grupos
-		
-		
+		input(type='submit', value='Regresar a opciones', style='width:100%', onClick="onClickBtnMostrarMenu()")
+		br
+		br
+		div#divlistadogrupos.tabla_listado(style="z-index:0")
 		p
-		
-		div#divlistadogrupos.tabla_listado
 
-			
 
+	section#nuevoGrupo.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		h3 Nuevo Grupo
+		label(for='codigo_grupo_n') Codigo:
+		input(style="max-width:300px;width:85%;",type='number', name='codigo_grupo_n', id='codigo_grupo_n', placeholder='codigo', required='')
+		label(for='descripcion_grupo_n') Descripcion:
+		input(style="max-width:300px;width:85%;",type='text', name='descripcion_grupo_n', id='descripcion_grupo_n', placeholder='descripcion', required='')
+		label(for='cuenta_grupo_n') Cuenta Contable:
+		input(style="max-width:300px;width:85%;",type='text', name='cuenta_grupo_n', id='cuenta_grupo_n', placeholder='cuenta contable', required='')
+		label(for='estado_grupo_n') Estado:
+		input(style="max-width:300px;width:85%;",type='text', name='estado_grupo_n', id='estado_grupo_n', placeholder='estado', required='')
+		br
+		br
+		input(style="max-width:300px;width:85%;",type='submit', value='Registrar nuevo grupo')
+		br
+		br
+		input(style="max-width:300px;width:85%;",type='submit', value='Cancelar' onClick="onClickBtnCancelarAgregarGrupo()")
 		p
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-	p mas cosas
-		//-#{grupos}
+
+	section#actualizarGrupo.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		h3 Actualizar Grupo
+		label(for='codigo_grupo_n') Codigo:
+		input(style="max-width:300px;width:85%;",type='number', name='codigo_grupo_a', id='codigo_grupo_a', placeholder='codigo', required='',readonly='readonly')
+		label(for='descripcion_grupo_n') Descripcion:
+		input(style="max-width:300px;width:85%;",type='text', name='descripcion_grupo_a', id='descripcion_grupo_a', placeholder='descripcion', required='')
+		label(for='cuenta_grupo_n') Cuenta Contable:
+		input(style="max-width:300px;width:85%;",type='text', name='cuenta_grupo_a', id='cuenta_grupo_a', placeholder='cuenta contable', required='')
+		label(for='estado_grupo_n') Estado:
+		input(style="max-width:300px;width:85%;",type='text', name='estado_grupo_a', id='estado_grupo_a', placeholder='estado', required='')
+		br
+		br
+		input(style="max-width:300px;width:85%;",type='submit', value='Actualizar grupo')
+		br
+		br
+		input(style="max-width:300px;width:85%;",type='submit',value='Cancelar' onClick="onClickBtnCancelarAgregarGrupo()")
+		p
+
+
+	

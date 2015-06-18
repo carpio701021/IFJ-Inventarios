@@ -256,7 +256,7 @@ input:not([type=submit]) {
   border-width:0px 0px 0px 0px;
 }
 .tabla_listado tr:first-child td{
-    background:-o-linear-gradient(bottom, #95430d 5%, #441a00 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #95430d), color-stop(1, #441a00) );
+  background:-o-linear-gradient(bottom, #95430d 5%, #441a00 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #95430d), color-stop(1, #441a00) );
   background:-moz-linear-gradient( center top, #95430d 5%, #441a00 100% );
   filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#95430d", endColorstr="#441a00");  background: -o-linear-gradient(top,#95430d,441a00);
 

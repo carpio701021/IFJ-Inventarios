@@ -19,9 +19,9 @@ var app = express();
 //session de usuarios
 app.use(sessions({
   cookieName: 'user_session',
-  secret: 'aT4023=DIj0230ij=S_jFeHf-fwe',   //contraseña de encriptamiento de la cookie
-  duration: 1 * 60 * 60 * 1000,       //duracion de la cookie 1 hora (sesion)
-  activeDuration: 30 * 60 * 1000  //re activacion de la duracion cookie 30 minutos
+  secret: 'aT4023=DIj0230ij=S_jFeHf-fwe', //contraseña de encriptamiento de la cookie
+  duration: 1 * 60 * 60 * 1000, //duracion de la cookie 1 hora (sesion)
+  activeDuration: 30 * 60 * 1000 //re activacion de la duracion cookie 30 minutos
 }));
 
 
@@ -33,7 +33,9 @@ app.set('view engine', 'jade');
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -73,7 +75,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 
 
