@@ -15,9 +15,13 @@ block scripts
 					+'<p>Cuenta contable: '+(lgrupos[gr].Cuenta_Contable||'-No establecido-')+ '</p>'
 					+'<p>Estado: '+(lgrupos[gr].Estado||'-No establecido-')+ '</p>'
 					+'<br></br>'
-					+'<input type="submit" value="Actualizar" style="width:45%" onClick="onClickBtnMostrarActualizarGrupo()"/>'
+					+'<input type="submit" value="Actualizar" style="width:45%" '
+					+'onClick="onClickBtnMostrarCambiarGrupo('
+						+lgrupos[gr].Codigo+',\''+lgrupos[gr].Descripcion+'\',\''+lgrupos[gr].Cuenta_Contable+'\',\''+lgrupos[gr].Estado+'\')"/>'
 					+'&nbsp;'
-					+'<input type="submit" value="Borrar" style="width:45%"/>'
+					+'<input type="submit" value="Borrar" style="width:45%"'
+					+'onClick="onClickBtnBorrarGrupo('
+						+lgrupos[gr].Codigo+',\''+lgrupos[gr].Descripcion+'\',\''+lgrupos[gr].Cuenta_Contable+'\',\''+lgrupos[gr].Estado+'\')"/>'
 					+'</td>'
 					+'</tr>';
 			}
@@ -32,7 +36,7 @@ block scripts
 			seclistgrupos.style.display="block";
 			nuevoGrupo.style.display="none";
 			opciones.style.display="none";
-			actualizarGrupo.style.display="none";
+			cambiarGrupo.style.display="none";
 		}
 
 		var onClickBtnMostrarMenu = function(){
@@ -40,48 +44,199 @@ block scripts
 			seclistgrupos.style.display="none";
 			nuevoGrupo.style.display="none";
 			opciones.style.display="block";
-			actualizarGrupo.style.display="none";
+			cambiarGrupo.style.display="none";
+			mensajes.style.display="none";
 		}
 
 		var onClickBtnMostrarNuevoGrupo = function(){
 			//limpiar valores actuales
-			codigo_grupo_n.value="";
-			descripcion_grupo_n.value="";
-			cuenta_grupo_n.value="";
-			estado_grupo_n.value="";
+			codigo_grupo_agregar.value="";
+			descripcion_grupo_agregar.value="";
+			cuenta_grupo_agregar.value="";
+			estado_grupo_agregar.value="";
 			//ocultar y mostrar
 			seclistgrupos.style.display="none";
 			nuevoGrupo.style.display="block";
 			opciones.style.display="none";
-			actualizarGrupo.style.display="none";
-
+			cambiarGrupo.style.display="none";
 		}
 
-		var onClickBtnMostrarActualizarGrupo = function(){
+		var onClickBtnMostrarCambiarGrupo = function(codigo,descripcion,cuenta,estado){
 			//limpiar valores actuales
-			codigo_grupo_a.value="";
-			descripcion_grupo_a.value="";
-			cuenta_grupo_a.value="";
-			estado_grupo_a.value="";
+			codigo_grupo_cambiar.value=codigo;
+			descripcion_grupo_cambiar.value=descripcion;
+			cuenta_grupo_cambiar.value=cuenta;
+			estado_grupo_cambiar.value=estado;
 			//ocultar y mostrar
 			seclistgrupos.style.display="none";
 			nuevoGrupo.style.display="none";
 			opciones.style.display="none";
-			actualizarGrupo.style.display="block";
-
+			cambiarGrupo.style.display="block";
 		}
 
-
-		var onClickBtnCancelarAgregarGrupo = function(){
+		var onClickBtnCancelar = function(){
 			if (confirm("¿Seguro desea cancelar operacion?\nAceptar = Sí")) {
 				//ocultar y mostrar
 				seclistgrupos.style.display="none";
 				nuevoGrupo.style.display="none";
 				opciones.style.display="block";
-				actualizarGrupo.style.display="none";
+				cambiarGrupo.style.display="none";
 			} 
-
 		}
+
+		var mensajeErrorGeneral = function(error){	
+			if(error){
+				titulo_mensajes_operaciones.innerHTML = '¡Error!';
+				mensajes_operaciones.innerHTML = error;
+				//ocultar y mostrar
+				seclistgrupos.style.display="none";
+				nuevoGrupo.style.display="none";
+				opciones.style.display="none";
+				cambiarGrupo.style.display="none";
+				mensajes.style.display = "block";			
+			} else {
+				titulo_mensajes_operaciones.innerHTML = '¡Error!';
+				mensajes_operaciones.innerHTML = 'Algo salió mal, favor intente mas tarde.';
+				//ocultar y mostrar
+				seclistgrupos.style.display="none";
+				nuevoGrupo.style.display="none";
+				opciones.style.display="none";
+				cambiarGrupo.style.display="none";
+				mensajes.style.display = "block";			
+			}
+		}
+
+		var onClickBtnBorrarGrupo = function(codigo,descripcion,cuenta,estado){
+			if(confirm("Esta a punto de borrar el grupo:" + "\n" 
+				+ "Codigo: " + codigo + "\n" 
+				+ "Descripcion: " + descripcion + "\n" 
+				+ "Cuenta: " + (cuenta || '-Sin asignar-') + "\n" 
+				+ "Estado: " + (estado || '-Sin asignar-') + "\n\n¿Desea continuar?" )
+			){
+				var data = '';
+				data+='codigo_grupo_borrar=' + codigo;
+
+				var requestABC ;
+				if(window.XMLHttpRequest){//Soporte para IE7+,Firefox,chrome,opera,safari
+					requestABC = new XMLHttpRequest();
+				}else{ //IE6-
+					requestABC = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+
+				requestABC.onreadystatechange = function(){
+					if(requestABC.readyState==4)
+						if(requestABC.status==200) {
+							//acciones cuado se haya cargado la pagina
+							var respuesta = JSON.parse(requestABC.responseText);
+							if(respuesta[0].tran_error == 0 ) {
+								titulo_mensajes_operaciones.innerHTML = '¡Hecho!';
+								mensajes_operaciones.innerHTML = respuesta[0].tran_mensaje;
+								nuevoGrupo.style.display = "none";
+								mensajes.style.display = "block";
+							} else if(respuesta[0].tran_error == 2){
+								alert("Error: \nEl código especificado no existe");							
+							}else mensajeErrorGeneral();					
+						}else mensajeErrorGeneral(); 
+				}
+				requestABC.open("POST","/grupos/borrar_grupo",true);
+				requestABC.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+				requestABC.send(data);
+			}else{
+				return false;
+			}
+		}
+
+		var onClickBtnAgregarGrupo = function(){
+			if(estado_grupo_agregar.value.length > 1 ) {
+				alert("Error: \nEl estado solo puede tener un caracter");	
+				return false;			
+			} else if (cuenta_grupo_agregar.value.length > 10 ) {
+				alert("Error: \nLa cuenta contable solo puede tener hasta 10 caracteres");	
+				return false;			
+			}else if (descripcion_grupo_agregar.value.length > 60 ) {
+				alert("Error: \nLa descripcion solo puede tener hasta 60 caracteres");	
+				return false;			
+			}
+
+			var data = '';
+			data+='codigo_grupo_agregar=' + codigo_grupo_agregar.value + '&';
+			data+='descripcion_grupo_agregar=' + descripcion_grupo_agregar.value + '&';
+			data+='cuenta_grupo_agregar=' + cuenta_grupo_agregar.value + '&';
+			data+='estado_grupo_agregar=' + estado_grupo_agregar.value ;
+
+			var requestABC ;
+			if(window.XMLHttpRequest){//Soporte para IE7+,Firefox,chrome,opera,safari
+				requestABC = new XMLHttpRequest();
+			}else{ //IE6-
+				requestABC = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+
+			requestABC.onreadystatechange = function(){
+				if(requestABC.readyState==4)
+					if(requestABC.status==200) {
+						//acciones cuado se aya cargado la pagina
+						var respuesta = JSON.parse(requestABC.responseText);
+						if(respuesta[0].tran_error == 0 ) {
+							titulo_mensajes_operaciones.innerHTML = '¡Hecho!';
+							mensajes_operaciones.innerHTML = respuesta[0].tran_mensaje;
+							nuevoGrupo.style.display = "none";
+							mensajes.style.display = "block";
+						} else if(respuesta[0].tran_error == 1){
+							alert("Error: \nEl código especificado ya existe");							
+						}else mensajeErrorGeneral();					
+					}else mensajeErrorGeneral(); 
+			}
+			requestABC.open("POST","/grupos/agregar_grupo",true);
+			requestABC.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+			requestABC.send(data);
+		}
+
+		var onClickBtnCambiarGrupo = function(){
+			if(estado_grupo_cambiar.value.length > 1 ) {
+				alert("Error: \nEl estado solo puede tener un caracter");	
+				return false;			
+			} else if(cuenta_grupo_cambiar.value.length > 10 ) {
+				alert("Error: \nLa cuenta contable solo puede tener hasta 10 caracteres");	
+				return false;			
+			}else if(descripcion_grupo_cambiar.value.length > 60 ) {
+				alert("Error: \nLa descripcion solo puede tener hasta 60 caracteres");	
+				return false;			
+			}
+
+			var data = '';
+			data+='codigo_grupo_cambiar=' + codigo_grupo_cambiar.value + '&';
+			data+='descripcion_grupo_cambiar=' + descripcion_grupo_cambiar.value + '&';
+			data+='cuenta_grupo_cambiar=' + cuenta_grupo_cambiar.value + '&';
+			data+='estado_grupo_cambiar=' + estado_grupo_cambiar.value ;
+
+			var requestCambiarG ;
+			if(window.XMLHttpRequest){//Soporte para IE7+,Firefox,chrome,opera,safari
+				requestABC = new XMLHttpRequest();
+			}else{ //IE6-
+				requestABC = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+
+			requestABC.onreadystatechange = function(){
+				if(requestABC.readyState==4)
+					if(requestABC.status==200) {
+						//acciones cuado se aya cargado la pagina
+						var respuesta = JSON.parse(requestABC.responseText);
+						if(respuesta[0].tran_error == 0 ) {
+							titulo_mensajes_operaciones.innerHTML = '¡Hecho!';
+							mensajes_operaciones.innerHTML = respuesta[0].tran_mensaje;
+							cambiarGrupo.style.display = "none";
+							mensajes.style.display = "block";
+						} else if(respuesta[0].tran_error == 2){
+							titulo_mensajes_operaciones.innerHTML = '¡Error!';
+							alert("Error: \nEl código especificado no existe");							
+						}else mensajeErrorGeneral();					
+					}else mensajeErrorGeneral(); 
+			}
+			requestABC.open("POST","/grupos/cambiar_grupo",true);
+			requestABC.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+			requestABC.send(data);
+		}
+
 
 block gruposli
 	li#gruposli.active
@@ -131,38 +286,46 @@ block content
 
 	section#nuevoGrupo.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
 		h3 Nuevo Grupo
-		label(for='codigo_grupo_n') Codigo:
-		input(style="max-width:300px;width:85%;",type='number', name='codigo_grupo_n', id='codigo_grupo_n', placeholder='codigo', required='')
-		label(for='descripcion_grupo_n') Descripcion:
-		input(style="max-width:300px;width:85%;",type='text', name='descripcion_grupo_n', id='descripcion_grupo_n', placeholder='descripcion', required='')
-		label(for='cuenta_grupo_n') Cuenta Contable:
-		input(style="max-width:300px;width:85%;",type='text', name='cuenta_grupo_n', id='cuenta_grupo_n', placeholder='cuenta contable', required='')
-		label(for='estado_grupo_n') Estado:
-		input(style="max-width:300px;width:85%;",type='text', name='estado_grupo_n', id='estado_grupo_n', placeholder='estado', required='')
+		label(for='codigo_grupo_agregar') Codigo:
+		input(style="max-width:300px;width:85%;",type='number', name='codigo_grupo_agregar', id='codigo_grupo_agregar', placeholder='codigo', required='')
+		label(for='descripcion_grupo_agregar') Descripcion:
+		input(style="max-width:300px;width:85%;",type='text', name='descripcion_grupo_agregar', id='descripcion_grupo_agregar', placeholder='descripcion', required='')
+		label(for='cuenta_grupo_agregar') Cuenta Contable:
+		input(style="max-width:300px;width:85%;",type='text', name='cuenta_grupo_agregar', id='cuenta_grupo_agregar', placeholder='cuenta contable', required='')
+		label(for='estado_grupo_agregar') Estado:
+		input(style="max-width:300px;width:85%;",type='text', name='estado_grupo_agregar', id='estado_grupo_agregar', placeholder='estado', required='')
 		br
 		br
-		input(style="max-width:300px;width:85%;",type='submit', value='Registrar nuevo grupo')
+		input(style="max-width:300px;width:85%;",type='submit', value='Registrar nuevo grupo', onClick="onClickBtnAgregarGrupo()")
 		br
 		br
-		input(style="max-width:300px;width:85%;",type='submit', value='Cancelar' onClick="onClickBtnCancelarAgregarGrupo()")
+		input(style="max-width:300px;width:85%;",type='submit', value='Cancelar', onClick="onClickBtnCancelar()")
 		p
 
-	section#actualizarGrupo.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+	section#cambiarGrupo.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
 		h3 Actualizar Grupo
-		label(for='codigo_grupo_n') Codigo:
-		input(style="max-width:300px;width:85%;",type='number', name='codigo_grupo_a', id='codigo_grupo_a', placeholder='codigo', required='',readonly='readonly')
-		label(for='descripcion_grupo_n') Descripcion:
-		input(style="max-width:300px;width:85%;",type='text', name='descripcion_grupo_a', id='descripcion_grupo_a', placeholder='descripcion', required='')
-		label(for='cuenta_grupo_n') Cuenta Contable:
-		input(style="max-width:300px;width:85%;",type='text', name='cuenta_grupo_a', id='cuenta_grupo_a', placeholder='cuenta contable', required='')
-		label(for='estado_grupo_n') Estado:
-		input(style="max-width:300px;width:85%;",type='text', name='estado_grupo_a', id='estado_grupo_a', placeholder='estado', required='')
+		label(for='codigo_grupo_cambiar') Codigo:
+		input(style="max-width:300px;width:85%;",type='number', name='codigo_grupo_cambiar', id='codigo_grupo_cambiar', placeholder='codigo', required='',readonly='readonly')
+		label(for='descripcion_grupo_cambiar') Descripcion:
+		input(style="max-width:300px;width:85%;",type='text', name='descripcion_grupo_cambiar', id='descripcion_grupo_cambiar', placeholder='descripcion', required='')
+		label(for='cuenta_grupo_cambiar') Cuenta Contable:
+		input(style="max-width:300px;width:85%;",type='text', name='cuenta_grupo_cambiar', id='cuenta_grupo_cambiar', placeholder='cuenta contable', required='')
+		label(for='estado_grupo_cambiar') Estado:
+		input(style="max-width:300px;width:85%;",type='text', name='estado_grupo_cambiar', id='estado_grupo_cambiar', placeholder='estado', required='')
 		br
 		br
-		input(style="max-width:300px;width:85%;",type='submit', value='Actualizar grupo')
+		input(style="max-width:300px;width:85%;",type='submit', value='Actualizar grupo', onClick="onClickBtnCambiarGrupo()")
 		br
 		br
-		input(style="max-width:300px;width:85%;",type='submit',value='Cancelar' onClick="onClickBtnCancelarAgregarGrupo()")
+		input(style="max-width:300px;width:85%;",type='submit',value='Cancelar' onClick="onClickBtnCancelar()")
+		p
+
+	section#mensajes.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		h3(id='titulo_mensajes_operaciones')
+		label(id='mensajes_operaciones')
+		br
+		br
+		input(style="max-width:300px;width:85%;",type='submit',value='Regresar a menú' onClick="onClickBtnMostrarMenu()")
 		p
 
 

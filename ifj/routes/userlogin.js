@@ -24,8 +24,8 @@ router.post('/verify', function(req, res) {
 		//validamos si el login es exitoso
 		if((JSON.stringify(params.rrows[0][0].login_error)==199)){
 			//si es exitoso se guarda la cookie con los datos del usuario
-			//if (req.user_session) {req.user_session.reset();}
-//			req.user_session.nombre_cliente = 'el puto';
+			req.user_session.codigo_cliente = req.body.c_empresa;
+			req.user_session.codigo_usuario = req.body.c_user;
 			req.user_session.nombre_cliente = (JSON.stringify(params.rrows[0][0].login_nombre_cliente)).toString().replace("\"", "").replace("\"", "");
 			req.user_session.nombre_usuario = (JSON.stringify(params.rrows[0][0].login_usuario_nombre)).toString().replace("\"", "").replace("\"", "");
 			req.user_session.login_server = (JSON.stringify(params.rrows[0][0].login_Server)).toString().replace("\"", "").replace("\"", "");
@@ -49,7 +49,7 @@ router.post('/verify', function(req, res) {
 
 	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-	console.log('IP2: '+ip);
+	console.log('Se ha logueado un usuario con ip: '+ip);
 
 	
 	//Metodo que realiza la consulta a la base de datos y devuelve:

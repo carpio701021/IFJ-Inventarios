@@ -31,10 +31,10 @@ function sdan_query (host , user , password , database_to_use , myquery , callba
 	//Se conecta a la base de datos
 	connection.connect(function(err){
 		if(!err) {
-			console.log("Database is connected ... \n\n");  
+			console.log("Database "+database_to_use+" is connected ...");  
 			//Si la conexion es exitosa manda a ejecutar el query
 			connection.query(myquery, function(err, rows, fields) {
-				console.log('Ejecutando myquery::==' + myquery );
+				console.log('Ejecutando myquery =>' + myquery );
 				if (err){
 					//codigo de error
 					console.log('Error al ejecutar la consulta');
@@ -65,7 +65,7 @@ function sdan_query (host , user , password , database_to_use , myquery , callba
 			});
 
 		} else {
-			console.log("Error connecting database ... \n\n");  
+			console.log("Error connecting database ...");  
 		}
 	});
 
