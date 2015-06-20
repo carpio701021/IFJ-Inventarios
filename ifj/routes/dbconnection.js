@@ -3,9 +3,11 @@ var router = express.Router();
 
 
 var default_dbhost='localhost';
-var default_dbuser='root';
-var default_dbpassword='1234';
+var default_dbuser='sdan_web';
+var default_dbpassword='web_pass';
 var default_db = 'sdandb';
+//sdan_web
+//web_pass
 
 exports.sdandb_query = function(  myquery , callback_to_query_parameters , callback_to_query){
 	sdan_query(default_dbhost , 

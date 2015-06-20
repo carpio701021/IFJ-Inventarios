@@ -26,7 +26,33 @@ router.get('/', function(req, res, next) {
 		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-		dbconnection.sdan_query(req.user_session.login_server, 'root', '1234', dbstrname, str_query, '', cargar_grupos);
+		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', cargar_grupos);
+
+	} else res.redirect('/login?error=debe iniciar sesion primero');
+});
+
+/* POST recargar grupos */
+router.post('/recargar_grupos', function(req, res, next) {
+	if (req.user_session && req.user_session.nombre_cliente) {
+
+		var cargar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
+			res.json(subparams.rrows[0]);
+		}
+
+		//llamada al objeto base de datos
+		var dbconnection = require('../routes/dbconnection.js');
+
+		//CALL `sdan002`.`sp_get_op_t_grupos`(<{p_codigo int}>, <{p_sort char(20)}>);
+		var str_query = 'CALL sp_get_op_t_grupos(' + 0 + ',\'CODIGO\');';
+
+		// sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
+		var dbstrname = 'sdan';
+
+		//definir nombre completo de la base de datos
+		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
+		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
+
+		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', cargar_grupos);
 
 	} else res.redirect('/login?error=debe iniciar sesion primero');
 });
@@ -68,7 +94,7 @@ router.post('/cambiar_grupo', function(req, res, next) {
 		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-		dbconnection.sdan_query(req.user_session.login_server, 'root', '1234', dbstrname, str_query, '', respuesta_actualizar_grupos);
+		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
 	}else res.redirect('/login?error=sesion caducada, inicie sesion de nuevo');
 
 });
@@ -110,7 +136,7 @@ router.post('/agregar_grupo', function(req, res, next) {
 		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-		dbconnection.sdan_query(req.user_session.login_server, 'root', '1234', dbstrname, str_query, '', respuesta_actualizar_grupos);
+		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
 	}else res.redirect('/login?error=sesion caducada, inicie sesion de nuevo');
 
 });
@@ -148,7 +174,7 @@ router.post('/borrar_grupo', function(req, res, next) {
 		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-		dbconnection.sdan_query(req.user_session.login_server, 'root', '1234', dbstrname, str_query, '', respuesta_actualizar_grupos);
+		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
 	}else res.redirect('/login?error=sesion caducada, inicie sesion de nuevo');
 
 });
