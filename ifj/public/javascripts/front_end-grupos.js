@@ -205,7 +205,10 @@ var onClickBtnAgregarGrupo = function(){
 					mensajes.style.display = "block";
 				} else if(respuesta[0].tran_error == 1){
 					alert("Error: \nEl código especificado ya existe");							
-				}else mensajeErrorGeneral();					
+				} else if(respuesta[0].tran_error == 9){
+					titulo_mensajes_operaciones.innerHTML = '¡Error!';
+					alert(respuesta[0].tran_mensaje);							
+				} else mensajeErrorGeneral();					
 			}else mensajeErrorGeneral(); 
 	}
 	requestABC.open("POST","/administracion/grupos/agregar_grupo",true);
@@ -257,6 +260,9 @@ var onClickBtnCambiarGrupo = function(){
 				} else if(respuesta[0].tran_error == 2){
 					titulo_mensajes_operaciones.innerHTML = '¡Error!';
 					alert("Error: \nEl código especificado no existe");							
+				} else if(respuesta[0].tran_error == 9){
+					titulo_mensajes_operaciones.innerHTML = '¡Error!';
+					alert(respuesta[0].tran_mensaje);							
 				}else mensajeErrorGeneral();					
 			}else mensajeErrorGeneral(); 
 	}

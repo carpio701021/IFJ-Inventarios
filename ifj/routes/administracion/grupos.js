@@ -57,25 +57,16 @@ router.post('/recargar_grupos', function(req, res, next) {
 	} else res.redirect('/login?error=debe iniciar sesion primero');
 });
 
+function validarCampos(inputtxt){ 
+	var letters = /^[A-Za-z0-9\s]+$/;  
+	if(inputtxt.match(letters)) return true;  
+	else return false;    
+}  
+
 
 /* POST actualizar grupo */
 router.post('/cambiar_grupo', function(req, res, next) {
 	if (req.user_session && req.user_session.nombre_cliente) {
-
-		var respuesta_actualizar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
-			res.json(subparams.rrows[0]);
-		}
-
-		//llamada al objeto base de datos
-		var dbconnection = require('../../routes/dbconnection.js');
-		//CALL `sdan001`.`sp_admin_op_t_grupos`(
-			//<{p_operacion char(10)}>, 
-			//<{p_codigo integer}>, 
-			//<{p_descripcion char(60)}>, 
-			//<{p_cuenta_contable char(10)}>, 
-			//<{p_estado char(1)}>, 
-			//<{p_codigo_usuario integer}>, 
-			//<{p_ip char(40)}>		);
 
 		var codigoGrupo = req.body.codigo_grupo_cambiar ;
 		var descripcion = req.body.descripcion_grupo_cambiar ;
@@ -83,18 +74,42 @@ router.post('/cambiar_grupo', function(req, res, next) {
 		var estado = req.body.estado_grupo_cambiar ;
 		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-		var str_query = 'CALL sp_admin_op_t_grupos(\'UPDATE\','+codigoGrupo
-			+',\''+descripcion+'\',\''+cuenta_contable+'\',\''
-			+estado+'\','+req.user_session.codigo_usuario+',\''+ip+'\');';
-		console.log(str_query);
+		if(validarCampos(codigoGrupo) && validarCampos(descripcion) 
+			&& validarCampos(cuenta_contable) && validarCampos(estado)){
+			// si todos los campos tienen un formato correcto se prosigue 
 
-		//sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
-		var dbstrname = 'sdan';
-		//definir nombre completo de la base de datos
-		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
-		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
+			var respuesta_actualizar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
+				res.json(subparams.rrows[0]);
+			}
+			//llamada al objeto base de datos
+			var dbconnection = require('../../routes/dbconnection.js');
+			//CALL `sdan001`.`sp_admin_op_t_grupos`(
+				//<{p_operacion char(10)}>, 
+				//<{p_codigo integer}>, 
+				//<{p_descripcion char(60)}>, 
+				//<{p_cuenta_contable char(10)}>, 
+				//<{p_estado char(1)}>, 
+				//<{p_codigo_usuario integer}>, 
+				//<{p_ip char(40)}>		);
+			var str_query = 'CALL sp_admin_op_t_grupos(\'UPDATE\','+codigoGrupo
+				+',\''+descripcion+'\',\''+cuenta_contable+'\',\''
+				+estado+'\','+req.user_session.codigo_usuario+',\''+ip+'\');';
+			console.log(str_query);
 
-		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
+			//sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
+			var dbstrname = 'sdan';
+			//definir nombre completo de la base de datos
+			if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
+			else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
+
+			dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
+		}else{
+			// si algun campo contiene algun caracter especial como comillas o diagonales se cancela la operación
+			console.log('campos invalidos');
+			res.json([{tran_error: 9,tran_mensaje: 'Uno de los campos contiene caracteres inválidos. Operación cancelada.'}]);
+		}
+
+		
 	}else res.redirect('/login?error=sesion caducada, inicie sesion de nuevo');
 
 });
@@ -104,20 +119,6 @@ router.post('/cambiar_grupo', function(req, res, next) {
 router.post('/agregar_grupo', function(req, res, next) {
 	if (req.user_session && req.user_session.nombre_cliente) {
 
-		var respuesta_actualizar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
-			res.json(subparams.rrows[0]);
-		}
-
-		//llamada al objeto base de datos
-		var dbconnection = require('../../routes/dbconnection.js');
-		//CALL `sdan001`.`sp_admin_op_t_grupos`(
-			//<{p_operacion char(10)}>, 
-			//<{p_codigo integer}>, 
-			//<{p_descripcion char(60)}>, 
-			//<{p_cuenta_contable char(10)}>, 
-			//<{p_estado char(1)}>, 
-			//<{p_codigo_usuario integer}>, 
-			//<{p_ip char(40)}>		);
 
 		var codigoGrupo = req.body.codigo_grupo_agregar ;
 		var descripcion = req.body.descripcion_grupo_agregar ;
@@ -125,18 +126,44 @@ router.post('/agregar_grupo', function(req, res, next) {
 		var estado = req.body.estado_grupo_agregar ;
 		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-		var str_query = 'CALL sp_admin_op_t_grupos(\'INSERT\','+codigoGrupo
-			+',\''+descripcion+'\',\''+cuenta_contable+'\',\''
-			+estado+'\','+req.user_session.codigo_usuario+',\''+ip+'\');';
-		console.log(str_query);
+		if(validarCampos(codigoGrupo) && validarCampos(descripcion) 
+			&& validarCampos(cuenta_contable) && validarCampos(estado)){
 
-		//sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
-		var dbstrname = 'sdan';
-		//definir nombre completo de la base de datos
-		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
-		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
+			var respuesta_actualizar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
+				res.json(subparams.rrows[0]);
+			}
 
-		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
+			//llamada al objeto base de datos
+			var dbconnection = require('../../routes/dbconnection.js');
+			//CALL `sdan001`.`sp_admin_op_t_grupos`(
+				//<{p_operacion char(10)}>, 
+				//<{p_codigo integer}>, 
+				//<{p_descripcion char(60)}>, 
+				//<{p_cuenta_contable char(10)}>, 
+				//<{p_estado char(1)}>, 
+				//<{p_codigo_usuario integer}>, 
+				//<{p_ip char(40)}>		);
+
+
+			var str_query = 'CALL sp_admin_op_t_grupos(\'INSERT\','+codigoGrupo
+				+',\''+descripcion+'\',\''+cuenta_contable+'\',\''
+				+estado+'\','+req.user_session.codigo_usuario+',\''+ip+'\');';
+			console.log(str_query);
+
+			//sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
+			var dbstrname = 'sdan';
+			//definir nombre completo de la base de datos
+			if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
+			else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
+
+			dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
+
+		}else{
+			// si algun campo contiene algun caracter especial como comillas o diagonales se cancela la operación
+			console.log('campos invalidos');
+			res.json([{tran_error: 9,tran_mensaje: 'Uno de los campos contiene caracteres inválidos. Operación cancelada.'}]);
+		}
+
 	}else res.redirect('/login?error=sesion caducada, inicie sesion de nuevo');
 
 });
