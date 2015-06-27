@@ -12,16 +12,18 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var userlogin = require('./routes/userlogin');
 var userlogout = require('./routes/userlogout');
-var grupos = require('./routes/grupos');
+
+var administracion = require('./routes/administracion/index');
+	var grupos = require('./routes/administracion/grupos');
 
 var app = express();
 
 //session de usuarios
 app.use(sessions({
-  cookieName: 'user_session',
-  secret: 'aT4023=DIj0230ij=S_jFeHf-fwe', //contraseña de encriptamiento de la cookie
-  duration: 1 * 60 * 60 * 1000, //duracion de la cookie 1 hora (sesion)
-  activeDuration: 30 * 60 * 1000 //re activacion de la duracion cookie 30 minutos
+	cookieName: 'user_session',
+	secret: 'aT4023=DIj0230ij=S_jFeHf-fwe', //contraseña de encriptamiento de la cookie
+	duration: 1 * 60 * 60 * 1000, //duracion de la cookie 1 hora (sesion)
+	activeDuration: 30 * 60 * 1000 //re activacion de la duracion cookie 30 minutos
 }));
 
 
@@ -34,7 +36,7 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extended: false
+	extended: false
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -43,13 +45,16 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/login', userlogin);
 app.use('/logout', userlogout);
-app.use('/grupos', grupos);
+
+app.use('/administracion', administracion);
+	app.use('/administracion/grupos', grupos);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+	var err = new Error('Not Found');
+	err.status = 404;
+	console.log('Error '+err.status+': \n'+err.stack);
+	next(err);
 });
 
 // error handlers
@@ -57,23 +62,23 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
+	app.use(function(err, req, res, next) {
+		res.status(err.status || 500);
+		res.render('error', {
+			message: err.message,
+			error: err
+		});
+	});
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+	res.status(err.status || 500);
+	res.render('error', {
+		message: err.message,
+		error: {}
+	});
 });
 
 

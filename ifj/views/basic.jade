@@ -7,34 +7,52 @@ html
 		block scripts
 	
 	body
-		#cssmenu
-			ul#menulu
-				li#logoli.client
-					span #{nombre_cliente}
+		#wrapper
+			#cssmenu
+				ul#menulu
+					li#logoli.client
+						#logoa(onClick='window.location = "/"')
+							span #{nombre_cliente}
 
-				block inicioli
-					li#inicioli
-						a(href='/')
-							span Inicio
-					|	
-				block gruposli
-					li#gruposli
-						a(href='/grupos')
-							span Grupos
-					|	
-				block productosli
-					li#productosli
-						a(href='/productos')
-							span Productos
-					|	
-				block contactoli
-					li#contactoli
-						a(href='/contacto')
-							span Contacto
-					|	
-				block logoutli
-					li#logoutli.last
-						a(href='/logout')
-							span Cerrar Sesión
+					block adminli
+						li#adminli
+							a(href='/administracion')
+								span Administración
+							
+					block transli
+						li#transli
+							a(href='/transacciones_inventarios')
+								span Transacciones de Inventarios
+							
+					block reportesli
+						li#reportesli
+							a(href='/reportes')
+								span Reportes
+							
+					block inventariosli
+						li#inventariosli.last
+							a(href='/inventarios')
+								span Inventarios
+						
 
-		block content
+			#content
+				block content
+
+			#footer
+				br
+				br
+				br
+				#cssmenu.footer
+					ul#menufooter.footer
+						
+						li#logout.user
+							#logoa(onClick='window.location = "/"')
+								span #{nombre_usuario}
+
+						li#configli.useropt
+							a(href='/configuser')
+								span Configuración
+
+						li#logoutli.useropt.last
+							a(href='/logout')
+								span Cerrar Sesión

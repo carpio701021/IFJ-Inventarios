@@ -6,7 +6,7 @@ router.get('/', function(req, res, next) {
 	if (req.user_session && req.user_session.nombre_cliente) {
 
 		var cargar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
-			res.render('grupos', {
+			res.render('administracion/grupos', {
 				nombre_cliente: req.user_session.nombre_cliente,
 				nombre_usuario: req.user_session.nombre_usuario,
 				grupos: JSON.stringify(subparams.rrows[0])
@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
 		}
 
 		//llamada al objeto base de datos
-		var dbconnection = require('../routes/dbconnection.js');
+		var dbconnection = require('../../routes/dbconnection.js');
 
 		//CALL `sdan002`.`sp_get_op_t_grupos`(<{p_codigo int}>, <{p_sort char(20)}>);
 		var str_query = 'CALL sp_get_op_t_grupos(' + 0 + ',\'CODIGO\');';
@@ -40,7 +40,7 @@ router.post('/recargar_grupos', function(req, res, next) {
 		}
 
 		//llamada al objeto base de datos
-		var dbconnection = require('../routes/dbconnection.js');
+		var dbconnection = require('../../routes/dbconnection.js');
 
 		//CALL `sdan002`.`sp_get_op_t_grupos`(<{p_codigo int}>, <{p_sort char(20)}>);
 		var str_query = 'CALL sp_get_op_t_grupos(' + 0 + ',\'CODIGO\');';
@@ -67,7 +67,7 @@ router.post('/cambiar_grupo', function(req, res, next) {
 		}
 
 		//llamada al objeto base de datos
-		var dbconnection = require('../routes/dbconnection.js');
+		var dbconnection = require('../../routes/dbconnection.js');
 		//CALL `sdan001`.`sp_admin_op_t_grupos`(
 			//<{p_operacion char(10)}>, 
 			//<{p_codigo integer}>, 
@@ -109,7 +109,7 @@ router.post('/agregar_grupo', function(req, res, next) {
 		}
 
 		//llamada al objeto base de datos
-		var dbconnection = require('../routes/dbconnection.js');
+		var dbconnection = require('../../routes/dbconnection.js');
 		//CALL `sdan001`.`sp_admin_op_t_grupos`(
 			//<{p_operacion char(10)}>, 
 			//<{p_codigo integer}>, 
@@ -151,7 +151,7 @@ router.post('/borrar_grupo', function(req, res, next) {
 		}
 
 		//llamada al objeto base de datos
-		var dbconnection = require('../routes/dbconnection.js');
+		var dbconnection = require('../../routes/dbconnection.js');
 		//CALL `sdan001`.`sp_admin_op_t_grupos`(
 			//<{p_operacion char(10)}>, 
 			//<{p_codigo integer}>, 
