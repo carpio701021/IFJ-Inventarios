@@ -149,7 +149,7 @@ DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_tran_web_login`(
 p_codigo_cliente integer,
 p_codigo_usuario integer,
-p_password char(10), 
+p_password char(60), 
 p_ip char(40)
 )
 BEGIN

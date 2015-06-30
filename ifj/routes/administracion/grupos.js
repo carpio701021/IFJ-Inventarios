@@ -1,6 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
+
+var error_conexion_db = function(res){
+	res.render('error_detalles', {
+		detalle_error: 'Sin conexión a la base de datos, favor intente más tarde. <br />Si el problema persiste contacte a su proveedor de servicio.'
+	});
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	if (req.user_session && req.user_session.nombre_cliente) {
@@ -11,7 +18,8 @@ router.get('/', function(req, res, next) {
 				nombre_usuario: req.user_session.nombre_usuario,
 				grupos: JSON.stringify(subparams.rrows[0])
 			});
-		}
+		};
+
 
 		//llamada al objeto base de datos
 		var dbconnection = require('../../routes/dbconnection.js');
@@ -26,7 +34,7 @@ router.get('/', function(req, res, next) {
 		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', cargar_grupos);
+		dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', cargar_grupos,error_conexion_db,res);
 
 	} else res.redirect('/login?error=debe iniciar sesion primero');
 });
@@ -52,7 +60,7 @@ router.post('/recargar_grupos', function(req, res, next) {
 		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', cargar_grupos);
+		dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', cargar_grupos,error_conexion_db,res);
 
 	} else res.redirect('/login?error=debe iniciar sesion primero');
 });
@@ -102,10 +110,9 @@ router.post('/cambiar_grupo', function(req, res, next) {
 			if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 			else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-			dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
+			dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', respuesta_actualizar_grupos,error_conexion_db,res);
 		}else{
 			// si algun campo contiene algun caracter especial como comillas o diagonales se cancela la operación
-			console.log('campos invalidos');
 			res.json([{tran_error: 9,tran_mensaje: 'Uno de los campos contiene caracteres inválidos. Operación cancelada.'}]);
 		}
 
@@ -129,7 +136,7 @@ router.post('/agregar_grupo', function(req, res, next) {
 		if(validarCampos(codigoGrupo) && validarCampos(descripcion) 
 			&& validarCampos(cuenta_contable) && validarCampos(estado)){
 
-			var respuesta_actualizar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
+			var respuesta_agregar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
 				res.json(subparams.rrows[0]);
 			}
 
@@ -156,11 +163,10 @@ router.post('/agregar_grupo', function(req, res, next) {
 			if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 			else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-			dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
+			dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', respuesta_agregar_grupos,error_conexion_db,res);
 
 		}else{
 			// si algun campo contiene algun caracter especial como comillas o diagonales se cancela la operación
-			console.log('campos invalidos');
 			res.json([{tran_error: 9,tran_mensaje: 'Uno de los campos contiene caracteres inválidos. Operación cancelada.'}]);
 		}
 
@@ -173,7 +179,7 @@ router.post('/agregar_grupo', function(req, res, next) {
 router.post('/borrar_grupo', function(req, res, next) {
 	if (req.user_session && req.user_session.nombre_cliente) {
 
-		var respuesta_actualizar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
+		var respuesta_borrar_grupos = function(subparams) {//funcion llamada en el callback de la consulta
 			res.json(subparams.rrows[0]);
 		}
 
@@ -201,8 +207,59 @@ router.post('/borrar_grupo', function(req, res, next) {
 		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
 		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
 
-		dbconnection.sdan_query(req.user_session.login_server, 'sdan_web', 'web_pass', dbstrname, str_query, '', respuesta_actualizar_grupos);
+		dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', respuesta_borrar_grupos,error_conexion_db,res);
 	}else res.redirect('/login?error=sesion caducada, inicie sesion de nuevo');
+
+});
+
+
+/* POST buscar grupos */
+router.post('/busqueda', function(req, res, next) {
+	if (req.user_session && req.user_session.nombre_cliente) {
+
+		var intxt_buscar_grupo = req.body.intxt_buscar_grupo ;
+		var rdBuscar_p_codigo = req.body.rdBuscar_p_codigo ;
+		console.log('busqueda: ' + intxt_buscar_grupo);
+		console.log('por codigo : '+ rdBuscar_p_codigo);
+
+		var respuesta_busqueda_grupos = function(subparams) {//funcion llamada en el callback de la consulta
+			res.json({
+				tran_error: 0,
+				tran_mensaje: 'Resultados de la busqueda: "'+intxt_buscar_grupo+'"' , 
+				grupos: subparams.rrows[0]
+			});
+		}
+
+		if(validarCampos(intxt_buscar_grupo)){//primero verificar si no contiene caracteres extraños
+			//llamada al objeto base de datos
+			var dbconnection = require('../../routes/dbconnection.js');
+
+			if(rdBuscar_p_codigo == 'true'){//si el tipo de busqueda es por codigo
+				if(!isNaN(intxt_buscar_grupo)){
+					//CALL `sdan002`.`sp_get_op_t_grupos`(<{p_codigo int}>, <{p_sort char(20)}>);
+					var str_query = 'CALL sp_get_op_t_grupos(' + intxt_buscar_grupo + ',\'CODIGO\');';
+				}else{
+					res.json({tran_error: 9,tran_mensaje: 'Debe ingresar un numero para buscar por código' , grupos: [] });
+					return false;
+				}
+			}else {//si la busqueda es por nombre/descripcion
+				//CALL `sdan002`.`sp_get_op_t_grupos`(<{p_codigo int}>, <{p_sort char(20)}>);
+				var str_query = 'CALL sp_find_data_like(\'op_t_grupos\',\'' + intxt_buscar_grupo + '\');';
+			}
+			// sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
+			var dbstrname = 'sdan';
+
+			//definir nombre completo de la base de datos
+			if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
+			else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
+
+			dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', respuesta_busqueda_grupos,error_conexion_db,res);
+		}else{
+			// si algun campo contiene algun caracter especial como comillas o diagonales se cancela la operación
+			res.json({tran_error: 9,tran_mensaje: 'La busqueda contiene caracteres inválidos' , grupos: [] });
+		}
+		
+	} else res.redirect('/login?error=debe iniciar sesion primero');
 
 });
 

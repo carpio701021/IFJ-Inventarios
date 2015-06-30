@@ -17,28 +17,36 @@ var recargarListaGrupos = function(){
 	requestABC.send();
 }
 
-var cargarLista = function(lista_grupos){
+var cargarLista = function(lista_grupos,titulo_tabla){
 	var htmlDelListadoDeGrupos='<Table>';
-	htmlDelListadoDeGrupos+='<tr> <td>Todos los Grupos</td> </tr>';
-	for(grupo in lista_grupos){
+	htmlDelListadoDeGrupos+='<tr> <td>'+titulo_tabla+'</td> </tr>';
+	if(lista_grupos.length > 0)
+		for(grupo in lista_grupos){
+			htmlDelListadoDeGrupos
+				+='<tr>'
+				+'<td>'
+				+'<p><b>Codigo: </b>'+lista_grupos[grupo].Codigo +'</p>'
+				+'<p><b>Descripción: </b>'+(lista_grupos[grupo].Descripcion||'-Sin descripcion-') + '</p>'
+				+'<p><b>Cuenta contable: </b>'+(lista_grupos[grupo].Cuenta_Contable||'-No establecido-')+ '</p>'
+				+'<p><b>Estado: </b>'+(lista_grupos[grupo].Estado||'-No establecido-')+ '</p>'
+				+'<br></br>'
+				+'<input type="submit" value="Modificar" style="width:45%" '
+				+'onClick="onClickBtnMostrarCambiarGrupo('
+					+lista_grupos[grupo].Codigo+',\''+lista_grupos[grupo].Descripcion+'\',\''+lista_grupos[grupo].Cuenta_Contable+'\',\''+lista_grupos[grupo].Estado+'\')"/>'
+				+'&nbsp;'
+				+'<input type="submit" value="Borrar" style="width:45%"'
+				+'onClick="onClickBtnBorrarGrupo('
+					+lista_grupos[grupo].Codigo+',\''+lista_grupos[grupo].Descripcion+'\',\''+lista_grupos[grupo].Cuenta_Contable+'\',\''+lista_grupos[grupo].Estado+'\')"/>'
+				+'</td>'
+				+'</tr>';
+		}
+	else
 		htmlDelListadoDeGrupos
-			+='<tr>'
-			+'<td>'
-			+'<p><b>Codigo: </b>'+lista_grupos[grupo].Codigo +'</p>'
-			+'<p><b>Descripción: </b>'+(lista_grupos[grupo].Descripcion||'-Sin descripcion-') + '</p>'
-			+'<p><b>Cuenta contable: </b>'+(lista_grupos[grupo].Cuenta_Contable||'-No establecido-')+ '</p>'
-			+'<p><b>Estado: </b>'+(lista_grupos[grupo].Estado||'-No establecido-')+ '</p>'
-			+'<br></br>'
-			+'<input type="submit" value="Modificar" style="width:45%" '
-			+'onClick="onClickBtnMostrarCambiarGrupo('
-				+lista_grupos[grupo].Codigo+',\''+lista_grupos[grupo].Descripcion+'\',\''+lista_grupos[grupo].Cuenta_Contable+'\',\''+lista_grupos[grupo].Estado+'\')"/>'
-			+'&nbsp;'
-			+'<input type="submit" value="Borrar" style="width:45%"'
-			+'onClick="onClickBtnBorrarGrupo('
-				+lista_grupos[grupo].Codigo+',\''+lista_grupos[grupo].Descripcion+'\',\''+lista_grupos[grupo].Cuenta_Contable+'\',\''+lista_grupos[grupo].Estado+'\')"/>'
-			+'</td>'
-			+'</tr>';
-	}
+				+='<tr>'+'<td>'
+				+'<h2> -Sin resultados-</h2>'
+				+'</td>'
+				+'</tr>';
+	
 	htmlDelListadoDeGrupos+='</table>';
 	document.getElementById("divlistadogrupos").innerHTML = htmlDelListadoDeGrupos;
 };
@@ -47,7 +55,7 @@ var cargarLista = function(lista_grupos){
 
 var onClickBtnMostrarTodosG = function(){
 	//ocultar y mostrar
-	cargarLista(lgrupos);
+	cargarLista(lgrupos,'Todos los Grupos');
 	seclistgrupos.style.display="block";
 	nuevoGrupo.style.display="none";
 	opciones.style.display="none";
@@ -271,3 +279,39 @@ var onClickBtnCambiarGrupo = function(){
 	requestABC.send(data);
 }
 
+var onClickBtnBuscarGrupos = function(){
+	if (intxt_buscar_grupo.value == '' ) return false;
+	var data = '';
+	data+='intxt_buscar_grupo=' + intxt_buscar_grupo.value + '&';
+	data+='rdBuscar_p_codigo=' + rdBuscar_p_codigo.checked ;
+
+	var requestCambiarG ;
+	if(window.XMLHttpRequest){//Soporte para IE7+,Firefox,chrome,opera,safari
+		requestABC = new XMLHttpRequest();
+	}else{ //IE6-
+		requestABC = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+
+	requestABC.onreadystatechange = function(){
+		if(requestABC.readyState==4)
+			if(requestABC.status==200) {
+				//acciones cuado se aya cargado la pagina
+				var respuesta = JSON.parse(requestABC.responseText);
+				if(respuesta.tran_error == 0 ) {
+					titulo = respuesta.tran_mensaje;
+					grupos_res_busqueda = respuesta.grupos;
+					cargarLista(grupos_res_busqueda,titulo);
+					//ocultar y mostrar
+					seclistgrupos.style.display="block";
+					nuevoGrupo.style.display="none";
+					opciones.style.display="none";
+					cambiarGrupo.style.display="none";
+				} else if(respuesta.tran_error == 9){
+					alert(respuesta.tran_mensaje);							
+				}else mensajeErrorGeneral();					
+			}else mensajeErrorGeneral(); 
+	}
+	requestABC.open("POST","/administracion/grupos/busqueda",true);
+	requestABC.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	requestABC.send(data);
+}

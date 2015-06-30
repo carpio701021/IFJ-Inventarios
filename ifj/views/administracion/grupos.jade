@@ -23,20 +23,21 @@ block content
 			input(style="width:100%;",type='submit', value='Mostrar todos', id='btnMostrarTodos' onClick='onClickBtnMostrarTodosG()')
 			br
 			br
-			input(style="width:100%;",type='submit', value='Nuevo', id='btnNuevo' onClick='onClickBtnMostrarNuevoGrupo()')
+			input(style="width:100%;",type='submit', value='Nuevo', id='btnNuevo', onClick='onClickBtnMostrarNuevoGrupo()')
 			p
 		p
 		#busquedas(style="max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
-			h3 Busqueda
-			input(style="width:95%;",type='text', name='buscar_grupo', id='buscar_grupo', placeholder='buscar por código de grupo', required='')
-			br
-			input(type='radio', name='rdBuscar', id='rdBuscar_p_codigo', value='codigo', checked='' ,onClick='document.getElementById("buscar_grupo").placeholder="buscar por código de grupo";')
-			text por código
-			br
-			input(type='radio', name='rdBuscar', id='rdBuscar_p_descripcion', value='descripcion', onClick='document.getElementById("buscar_grupo").placeholder="buscar por descripción de grupo";')
-			text en descripcion
-			br
-			input(style="width:100%;",type='submit', value='Buscar')
+			form(action='javascript:void(0);')
+				h3 Busqueda
+				input(style="width:95%;",type='text', name='intxt_buscar_grupo', id='intxt_buscar_grupo', placeholder='buscar por código de grupo', required='')
+				br
+				input(type='radio', name='rdBuscar', id='rdBuscar_p_codigo', value='codigo', checked='' ,onClick='intxt_buscar_grupo.placeholder="buscar por código de grupo";')
+				text por código
+				br
+				input(type='radio', name='rdBuscar', id='rdBuscar_p_descripcion', value='descripcion', onClick='intxt_buscar_grupo.placeholder="buscar en descripción de grupo";')
+				text en descripcion
+				br
+				input(style="width:100%;",type='submit', id='btn_buscar_grupos', value='Buscar', onClick='onClickBtnBuscarGrupos();')
 
 			br
 			br
@@ -47,6 +48,7 @@ block content
 	section#seclistgrupos.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
 		br
 		br
+		h3(id='seclistgrupos_titulo')
 		input(type='submit', value='Regresar', style='width:100%', onClick="onClickBtnMostrarMenu()")
 		br
 		br
