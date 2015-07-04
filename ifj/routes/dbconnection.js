@@ -6,18 +6,6 @@ default_dbhost='localhost';
 default_dbuser='sdan_web';
 default_dbpassword='web_pass';
 default_db = 'sdandb';
-//sdan_web
-//web_pass
-
-exports.sdandb_query = function(  myquery , callback_to_query_parameters , callback_to_query , if_error , res){
-	sdan_query(default_dbhost , 
-		default_db,
-		myquery,
-		callback_to_query_parameters,
-		callback_to_query , 
-		if_error,res);
-}
-
 
 function sdan_query_specific (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query , if_error , res){
 
@@ -33,7 +21,7 @@ function sdan_query_specific (host , user , password , database_to_use , myquery
 	//Se conecta a la base de datos
 	connection.connect(function(err){
 		if(!err) {
-			console.log("Database "+database_to_use+" is connected ...");  
+			console.log("Database " + database_to_use + " is connected ...");  
 			//Si la conexion es exitosa manda a ejecutar el query
 			connection.query(myquery, function(err, rows, fields) {
 				console.log('Ejecutando myquery =>' + myquery );
@@ -77,8 +65,29 @@ function sdan_query_specific (host , user , password , database_to_use , myquery
 
 }
 
+
+exports.sdandb_query = function(  myquery , callback_to_query_parameters , callback_to_query , if_error , res){
+	sdan_query_specific (default_dbhost , 
+		default_dbuser , 
+		default_dbpassword , 
+		default_db , 
+		myquery , 
+		callback_to_query_parameters , 
+		callback_to_query , 
+		if_error , 
+		res );
+}
+//dbstrname
+
+
 function sdan_query (host , database_to_use , myquery , callback_to_query_parameters , callback_to_query , if_error , res){
-	return sdan_query_specific (host , default_dbuser , default_dbpassword , database_to_use , myquery , callback_to_query_parameters , callback_to_query , if_error,res);
+
+	//definir nombre completo de la base de datos
+	var dbstrname = 'sdan';
+	if(database_to_use <=9) dbstrname +='00'+ database_to_use;
+	else if(database_to_use <=99) dbstrname +='0'+ database_to_use;
+
+	return sdan_query_specific (host , default_dbuser , default_dbpassword , dbstrname , myquery , callback_to_query_parameters , callback_to_query , if_error,res);
 }
 
 exports.sdan_query = sdan_query;

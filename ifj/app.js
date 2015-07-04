@@ -14,7 +14,13 @@ var userlogin = require('./routes/userlogin');
 var userlogout = require('./routes/userlogout');
 
 var administracion = require('./routes/administracion/index');
-	var grupos = require('./routes/administracion/grupos');
+	var admin_grupos = require('./routes/administracion/grupos');
+	var admin_unidades = require('./routes/administracion/unidades');
+var transacciones = require('./routes/transacciones_inventarios/index');
+var reportes = require('./routes/reportes/index');
+    var rep_catalogos = require('./routes/reportes/catalogos');
+    var rep_inventarios = require('./routes/reportes/inventarios');
+
 
 var app = express();
 
@@ -47,7 +53,13 @@ app.use('/login', userlogin);
 app.use('/logout', userlogout);
 
 app.use('/administracion', administracion);
-	app.use('/administracion/grupos', grupos);
+    app.use('/administracion/grupos', admin_grupos);
+    app.use('/administracion/unidades', admin_unidades);
+app.use('/transacciones_inventarios', transacciones);
+app.use('/reportes', reportes);
+    app.use('/reportes/catalogos', rep_catalogos);
+    app.use('/reportes/inventarios', rep_inventarios);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -64,6 +76,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
 	app.use(function(err, req, res, next) {
 		res.status(err.status || 500);
+		console.log('Error '+err.status+': \n'+err.stack);
 		res.render('error', {
 			message: err.message,
 			error: err
@@ -75,6 +88,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
 	res.status(err.status || 500);
+	console.log('Error '+err.status+': \n'+err.stack);
 	res.render('error', {
 		message: err.message,
 		error: {}

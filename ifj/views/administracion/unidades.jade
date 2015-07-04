@@ -1,0 +1,100 @@
+extends ../basic
+
+block scripts
+	script(languaje='javascript',src='/javascripts/front_end-unidades.js')
+
+	script.
+		var elementos = !{elementos};
+
+		
+block adminli
+	li#adminli.active
+		a(href='/administracion/')
+			span Administración
+
+
+
+block content
+	p
+	h2 Administración de unidades de medida
+	section#opciones.container(style="max-width:85%;padding:5px;text-align:center")
+		#btnsOpciones(style=" max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+			h3 Opciones
+			input(style="width:100%;",type='submit', value='Mostrar todas', id='btnMostrarTodos' onClick='onClickBtnMostrarTodos()')
+			br
+			br
+			input(style="width:100%;",type='submit', value='Nueva', id='btnNuevo', onClick='onClickBtnMostrarNuevoElemento()')
+			p
+		p
+		#busquedas(style="max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+			form(action='javascript:void(0);')
+				h3 Búsqueda
+				input(style="width:95%;text-transform:uppercase;",type='text', name='intxt_buscar_elemento', id='intxt_buscar_elemento', placeholder='buscar unidad de medida', required='')
+				br
+				br
+				input(style="width:100%;",type='submit', id='btn_buscar_elementos', value='Buscar', onClick='onClickBtnBuscarElementos();')
+
+			br
+			br
+			br
+
+	p
+
+
+	section#seclistelementos.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		br
+		br
+		h3(id='seclistelementos_titulo')
+		input(type='submit', value='Regresar', style='width:100%', onClick="onClickBtnMostrarMenu()")
+		br
+		br
+		div#divlistadoelementos.tabla_listado(style="z-index:0")
+		br
+		br
+		input(type='submit', value='Regresar', style='width:100%', onClick="onClickBtnMostrarMenu()")
+		p
+
+
+	section#nuevoElemento.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		form(action='javascript:void(0);')
+			h3 Nueva unidad de medida
+			label(for='codigo_elemento_agregar') 
+				b Nombre:
+			input(style="max-width:300px;width:85%;text-transform:uppercase;",type='text', name='codigo_elemento_agregar', id='codigo_elemento_agregar', placeholder='código', required='')
+			br
+			br
+			input(style="max-width:300px;width:85%;",type='submit', value='Registrar nuevo elemento', onClick="onClickBtnAgregarElemento()")
+			br
+			br
+			input(style="max-width:300px;width:85%;",type='submit', value='Cancelar', onClick="onClickBtnCancelar()")
+			p
+
+	section#cambiarElemento.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		form(action='javascript:void(0);')
+			h3 Actualizar unidad de medida
+			label(for='codigo_elemento_cambiar') 
+				b Nombre actual:
+			input(style="max-width:300px;width:85%;",type='text', name='codigo_elemento_cambiar', id='codigo_elemento_cambiar', placeholder='codigo', required='',readonly='readonly')
+			br
+			br
+			label(for='codigo_elemento_cambiado') 
+				b Nuevo nombre:
+			input(style="max-width:300px;width:85%;text-transform:uppercase;",type='text', name='codigo_elemento_cambiado', id='codigo_elemento_cambiado', placeholder='codigo', required='')
+			br
+			br
+			input(style="max-width:300px;width:85%;",type='submit', value='Procesar', onClick="onClickBtnCambiarElemento()")
+			br
+			br
+			input(style="max-width:300px;width:85%;",type='submit',value='Cancelar' onClick="onClickBtnCancelar()")
+			p
+
+	section#mensajes.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		h3(id='titulo_mensajes_operaciones')
+		label(id='mensajes_operaciones')
+		br
+		br
+		input(style="max-width:300px;width:85%;",type='submit',value='Regresar' onClick="onClickBtnMostrarMenu()")
+		p
+
+
+	

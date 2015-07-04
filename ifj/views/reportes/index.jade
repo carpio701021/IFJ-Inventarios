@@ -1,0 +1,23 @@
+extends ../basic
+
+block reportesli
+	li#reportesli.active
+		a(href='/reportes')
+			span Reportes
+
+
+
+block content
+	p
+	section#opciones.container(style="max-width:85%;padding:5px;text-align:center")
+		#btnsOpciones(style=" max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+			h3 Reportes
+			input(style="width:100%;",type='submit', value='Reportes de Catalogos', onClick='window.location = "/reportes/catalogos"')
+			br
+			br
+			input(style="width:100%;",type='submit', value='Reportes de Inventarios', onClick='window.location = "/reportes/inventarios"')
+			br
+			br
+		p
+
+

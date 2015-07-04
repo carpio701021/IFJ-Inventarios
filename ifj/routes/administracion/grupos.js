@@ -2,12 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 
-var error_conexion_db = function(res){
-	res.render('error_detalles', {
-		detalle_error: 'Sin conexión a la base de datos, favor intente más tarde. <br />Si el problema persiste contacte a su proveedor de servicio.'
-	});
-}
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	if (req.user_session && req.user_session.nombre_cliente) {
@@ -27,14 +21,8 @@ router.get('/', function(req, res, next) {
 		//CALL `sdan002`.`sp_get_op_t_grupos`(<{p_codigo int}>, <{p_sort char(20)}>);
 		var str_query = 'CALL sp_get_op_t_grupos(' + 0 + ',\'CODIGO\');';
 
-		// sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
-		var dbstrname = 'sdan';
-
-		//definir nombre completo de la base de datos
-		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
-		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
-
-		dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', cargar_grupos,error_conexion_db,res);
+		// sdan_query (host , database_to_use , myquery , callback_to_query_parameters , callback_to_query , if_error , res){
+		dbconnection.sdan_query(req.user_session.login_server , req.user_session.login_db, str_query, '', cargar_grupos,error_conexion_db,res);
 
 	} else res.redirect('/login?error=debe iniciar sesion primero');
 });
@@ -54,17 +42,13 @@ router.post('/recargar_grupos', function(req, res, next) {
 		var str_query = 'CALL sp_get_op_t_grupos(' + 0 + ',\'CODIGO\');';
 
 		// sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
-		var dbstrname = 'sdan';
-
-		//definir nombre completo de la base de datos
-		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
-		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
-
-		dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', cargar_grupos,error_conexion_db,res);
+		dbconnection.sdan_query(req.user_session.login_server , req.user_session.login_db, str_query, '', cargar_grupos,error_conexion_db,res);
 
 	} else res.redirect('/login?error=debe iniciar sesion primero');
 });
 
+
+//funcion que verifica que un texto no contenga caracteres extraños
 function validarCampos(inputtxt){ 
 	var letters = /^[A-Za-z0-9\s]+$/;  
 	if(inputtxt.match(letters)) return true;  
@@ -105,12 +89,7 @@ router.post('/cambiar_grupo', function(req, res, next) {
 			console.log(str_query);
 
 			//sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
-			var dbstrname = 'sdan';
-			//definir nombre completo de la base de datos
-			if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
-			else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
-
-			dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', respuesta_actualizar_grupos,error_conexion_db,res);
+			dbconnection.sdan_query(req.user_session.login_server , req.user_session.login_db, str_query, '', respuesta_actualizar_grupos,error_conexion_db,res);
 		}else{
 			// si algun campo contiene algun caracter especial como comillas o diagonales se cancela la operación
 			res.json([{tran_error: 9,tran_mensaje: 'Uno de los campos contiene caracteres inválidos. Operación cancelada.'}]);
@@ -158,12 +137,7 @@ router.post('/agregar_grupo', function(req, res, next) {
 			console.log(str_query);
 
 			//sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
-			var dbstrname = 'sdan';
-			//definir nombre completo de la base de datos
-			if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
-			else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
-
-			dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', respuesta_agregar_grupos,error_conexion_db,res);
+			dbconnection.sdan_query(req.user_session.login_server , req.user_session.login_db, str_query, '', respuesta_agregar_grupos,error_conexion_db,res);
 
 		}else{
 			// si algun campo contiene algun caracter especial como comillas o diagonales se cancela la operación
@@ -202,12 +176,7 @@ router.post('/borrar_grupo', function(req, res, next) {
 		console.log(str_query);
 
 		//sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
-		var dbstrname = 'sdan';
-		//definir nombre completo de la base de datos
-		if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
-		else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
-
-		dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', respuesta_borrar_grupos,error_conexion_db,res);
+		dbconnection.sdan_query(req.user_session.login_server , req.user_session.login_db, str_query, '', respuesta_borrar_grupos,error_conexion_db,res);
 	}else res.redirect('/login?error=sesion caducada, inicie sesion de nuevo');
 
 });
@@ -247,13 +216,7 @@ router.post('/busqueda', function(req, res, next) {
 				var str_query = 'CALL sp_find_data_like(\'op_t_grupos\',\'' + intxt_buscar_grupo + '\');';
 			}
 			// sdan_query (host , user , password , database_to_use , myquery , callback_to_query_parameters , callback_to_query)
-			var dbstrname = 'sdan';
-
-			//definir nombre completo de la base de datos
-			if(req.user_session.login_db <=9) dbstrname +='00'+req.user_session.login_db;
-			else if(req.user_session.login_db <=99) dbstrname +='0'+req.user_session.login_db;
-
-			dbconnection.sdan_query(req.user_session.login_server , dbstrname, str_query, '', respuesta_busqueda_grupos,error_conexion_db,res);
+			dbconnection.sdan_query(req.user_session.login_server , req.user_session.login_db, str_query, '', respuesta_busqueda_grupos,error_conexion_db,res);
 		}else{
 			// si algun campo contiene algun caracter especial como comillas o diagonales se cancela la operación
 			res.json({tran_error: 9,tran_mensaje: 'La busqueda contiene caracteres inválidos' , grupos: [] });
@@ -262,6 +225,13 @@ router.post('/busqueda', function(req, res, next) {
 	} else res.redirect('/login?error=debe iniciar sesion primero');
 
 });
+
+
+var error_conexion_db = function(res){
+	res.render('error_detalles', {
+		detalle_error: 'Sin conexión a la base de datos, favor intente más tarde. <br />Si el problema persiste contacte a su proveedor de servicio.'
+	});
+}
 
 
 module.exports = router;

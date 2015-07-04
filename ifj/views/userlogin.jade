@@ -5,14 +5,18 @@ block content
 		h1= title
 
 	section.loginform.cf
-		form(name='login', action='/login/verify', method='POST', accept-charset='utf-8')
+		form(name='login', action='/login', method='POST', accept-charset='utf-8')
 			ul
+				if error
+					li
+						h4(style="color:red;") Error: #{error}
+
 				li
-					label(for='c_empresa') Codigo Empresa
-					input(type='number', name='c_empresa', placeholder='empresa', required='')
+					label(for='c_cliente') Código Cliente
+					input(type='number', name='c_cliente', placeholder='cliente', required='')
 					
 				li
-					label(for='c_user') Codigo Usuario
+					label(for='c_user') Código Usuario
 					input(type='number', name='c_user', placeholder='usuario', required='')
 					
 				li
