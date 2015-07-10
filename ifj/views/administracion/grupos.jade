@@ -18,7 +18,7 @@ block content
 	p
 	h2 Administración de grupos
 	section#opciones.container(style="max-width:85%;padding:5px;text-align:center")
-		#btnsOpciones(style=" max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+		#btnsOpciones(style=" max-width:400px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
 			h3 Opciones
 			input(style="width:100%;",type='submit', value='Mostrar todos', id='btnMostrarTodos' onClick='onClickBtnMostrarTodosG()')
 			br
@@ -26,7 +26,7 @@ block content
 			input(style="width:100%;",type='submit', value='Nuevo', id='btnNuevo', onClick='onClickBtnMostrarNuevoGrupo()')
 			p
 		p
-		#busquedas(style="max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+		#busquedas(style="max-width:400px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
 			form(action='javascript:void(0);')
 				h3 Búsqueda
 				input(style="width:95%;",type='text', name='intxt_buscar_grupo', id='intxt_buscar_grupo', placeholder='buscar por código de grupo', required='')
@@ -59,57 +59,74 @@ block content
 		p
 
 
-	section#nuevoGrupo.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+	section#nuevoGrupo.container(style="max-width:85%;padding:5px;display:none;")
 		form(action='javascript:void(0);')
-			h3 Nuevo Grupo
-			label(for='codigo_grupo_agregar') 
-				b Código:
-			input(style="max-width:300px;width:85%;",type='number', name='codigo_grupo_agregar', id='codigo_grupo_agregar', placeholder='codigo', required='')
-			label(for='descripcion_grupo_agregar') 
-				b Descripción:
-			input(style="max-width:300px;width:85%;",type='text', name='descripcion_grupo_agregar', id='descripcion_grupo_agregar', placeholder='descripcion', required='')
-			label(for='cuenta_grupo_agregar') 
-				b Cuenta Contable:
-			input(style="max-width:300px;width:85%;",type='text', name='cuenta_grupo_agregar', id='cuenta_grupo_agregar', placeholder='cuenta contable', required='')
-			label(for='estado_grupo_agregar') 
-				b Estado:
-			select(style="max-width:300px;width:85%;",id='estado_grupo_agregar', required='') 
-				option(option value='', disabled selected, style='color:gray;') seleccione un estado
-				option(value='A') Activo
-				option(value='I') Inactivo
+			h3(style='text-align:center;') Nuevo Grupo
+			div.row
+				label.col-1-2(for='codigo_grupo_agregar') 
+					b Código:
+				input.col-1-2(type='number', name='codigo_grupo_agregar', id='codigo_grupo_agregar', placeholder='codigo', required='')
+			
+			div.row
+				label.col-1-2(for='descripcion_grupo_agregar') 
+					b Descripción:
+				input.col-1-2(type='text', name='descripcion_grupo_agregar', id='descripcion_grupo_agregar', placeholder='descripcion', required='')
+			
+			div.row
+				label.col-1-2(for='cuenta_grupo_agregar') 
+					b Cuenta Contable:
+				input.col-1-2(type='text', name='cuenta_grupo_agregar', id='cuenta_grupo_agregar', placeholder='cuenta contable', required='')
+			
+			div.row
+				label.col-1-2(for='estado_grupo_agregar') 
+					b Estado:
+				select.col-1-2(id='estado_grupo_agregar', required='') 
+					option(option value='', disabled selected, style='color:gray;') seleccione un estado
+					option(value='A') Activo
+					option(value='I') Inactivo
 			br
 			br
-			input(style="max-width:300px;width:85%;",type='submit', value='Registrar nuevo grupo', onClick="onClickBtnAgregarGrupo()")
-			br
-			br
-			input(style="max-width:300px;width:85%;",type='submit', value='Cancelar', onClick="onClickBtnCancelar()")
+			div.row(style='text-align:center;')
+				input(style="max-width:400px;width:85%;",type='submit', value='Registrar nuevo grupo', onClick="onClickBtnAgregarGrupo()")
+				br
+				br
+				input(style="max-width:400px;width:85%;",type='submit', value='Cancelar', onClick="onClickBtnCancelar()")
 			p
 
-	section#cambiarGrupo.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+	section#cambiarGrupo.container(style="max-width:85%;padding:5px;display:none;")
 		form(action='javascript:void(0);')
-			h3 Actualizar Grupo
-			label(for='codigo_grupo_cambiar') 
-				b Código:
-			input(style="max-width:300px;width:85%;",type='number', name='codigo_grupo_cambiar', id='codigo_grupo_cambiar', placeholder='codigo', required='',readonly='readonly')
-			label(for='descripcion_grupo_cambiar')  
-				b Descripción:
-			input(style="max-width:300px;width:85%;",type='text', name='descripcion_grupo_cambiar', id='descripcion_grupo_cambiar', placeholder='descripcion', required='')
-			label(for='cuenta_grupo_cambiar')  
-				b Cuenta Contable:
-			input(style="max-width:300px;width:85%;",type='text', name='cuenta_grupo_cambiar', id='cuenta_grupo_cambiar', placeholder='cuenta contable', required='')
-			label(for='estado_grupo_cambiar')  
-				b Estado:
-			select(style="max-width:300px;width:85%;",id='estado_grupo_cambiar', required='') 
-				option(option value='', disabled selected, style='color:gray;') seleccione un estado
-				option(value='A') Activo
-				option(value='I') Inactivo
-			br
-			br
-			input(style="max-width:300px;width:85%;",type='submit', value='Procesar', onClick="onClickBtnCambiarGrupo()")
-			br
-			br
-			input(style="max-width:300px;width:85%;",type='submit',value='Cancelar' onClick="onClickBtnCancelar()")
-			p
+			h3(style='text-align:center;') Actualizar Grupo
+			div.row
+				label.col-1-2(for='codigo_grupo_cambiar') 
+					b Código:
+				input.col-1-2(type='number', name='codigo_grupo_cambiar', id='codigo_grupo_cambiar', placeholder='codigo', required='',readonly='readonly')
+
+			div.row
+				label.col-1-2(for='descripcion_grupo_cambiar')  
+					b Descripción:
+				input.col-1-2(type='text', name='descripcion_grupo_cambiar', id='descripcion_grupo_cambiar', placeholder='descripcion', required='')
+				
+			div.row
+				label.col-1-2(for='cuenta_grupo_cambiar')  
+					b Cuenta Contable:
+				input.col-1-2(type='text', name='cuenta_grupo_cambiar', id='cuenta_grupo_cambiar', placeholder='cuenta contable', required='')
+				
+			div.row
+				label.col-1-2(for='estado_grupo_cambiar')  
+					b Estado:
+				select.col-1-2(id='estado_grupo_cambiar', required='') 
+					option(option value='', disabled selected, style='color:gray;') seleccione un estado
+					option(value='A') Activo
+					option(value='I') Inactivo
+				br
+				br
+				
+			div.row(style='text-align:center;')
+				input(style="max-width:400px;width:85%;",type='submit', value='Procesar', onClick="onClickBtnCambiarGrupo()")
+				br
+				br
+				input(style="max-width:400px;width:85%;",type='submit',value='Cancelar' onClick="onClickBtnCancelar()")
+				p
 
 	section#mensajes.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
 		h3(id='titulo_mensajes_operaciones')

@@ -19,7 +19,7 @@ block content
 	p
 	h2 Administración de items
 	section#opciones.container(style="max-width:85%;padding:5px;text-align:center")
-		#btnsOpciones(style=" max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+		#btnsOpciones(style=" max-width:400px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
 			h3 Opciones
 			input(style="width:100%;",type='submit', value='Mostrar todos', id='btnMostrarTodos' onClick='onClickBtnMostrarTodosG()')
 			br
@@ -27,7 +27,7 @@ block content
 			input(style="width:100%;",type='submit', value='Nuevo', id='btnNuevo', onClick='onClickBtnMostrarNuevoElemento()')
 			p
 		p
-		#busquedas(style="max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+		#busquedas(style="max-width:400px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
 			form(action='javascript:void(0);')
 				h3 Búsqueda
 				input(style="width:95%;",type='text', name='intxt_buscar_elemento', id='intxt_buscar_elemento', placeholder='buscar por código de elemento', required='')
@@ -61,8 +61,8 @@ block content
 
 
 	section#nuevoElemento.container(style="max-width:85%;padding:5px;display:none;")
-		form.row(action='javascript:void(0);',id='formulario_nuevo_item')
-			h3 Nuevo Item
+		form(action='javascript:void(0);',id='formulario_nuevo_item')
+			h3(style='text-align:center;') Nuevo Item
 			div.row
 				label.col-1-2(for='codigo_grupo_elemento_agregar')
 					b Grupo:
@@ -216,7 +216,7 @@ block content
 
 	section#cambiarElemento.container(style="max-width:85%;padding:5px;display:none;")
 		form.row(action='javascript:void(0);',id='formulario_cambiar_item')
-			h3 Modificar Item
+			h3(style='text-align:center;') Modificar Item
 			div.row
 				label.col-1-2(for='codigo_grupo_elemento_cambiar')
 					b Grupo:
