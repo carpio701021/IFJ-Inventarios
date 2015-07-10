@@ -345,16 +345,25 @@ router.post('/busqueda', function(req, res, next) {
 	if (req.user_session && req.user_session.nombre_cliente) {
 
 		var intxt_buscar_item = req.body.intxt_buscar_item ;
+		var intxt_buscar_item_grupo = req.body.intxt_buscar_item_grupo ;
 		var rdBuscar_p_codigo = req.body.rdBuscar_p_codigo ;
 		console.log('busqueda: ' + intxt_buscar_item);
+		console.log('busqueda: ' + intxt_buscar_item_grupo);
 		console.log('por codigo : '+ rdBuscar_p_codigo);
 
 		var respuesta_busqueda_items = function(subparams) {//funcion llamada en el callback de la consulta
-			res.json({
-				tran_error: 0,
-				tran_mensaje: 'Resultados de la busqueda: "'+intxt_buscar_item+'"' , 
-				items: subparams.rrows[0]
-			});
+			if(rdBuscar_p_codigo == 'true')
+				res.json({
+					tran_error: 0,
+					tran_mensaje: 'Resultados de la busqueda: grupo "'+intxt_buscar_item_grupo+'" y código "' + intxt_buscar_item +'"' , 
+					items: subparams.rrows[0]
+				});
+			else
+				res.json({
+					tran_error: 0,
+					tran_mensaje: 'Resultados de la busqueda: "' + intxt_buscar_item +'"' , 
+					items: subparams.rrows[0]
+				});
 		}
 
 		if(validarCampos(intxt_buscar_item)){//primero verificar si no contiene caracteres extraños
@@ -362,9 +371,9 @@ router.post('/busqueda', function(req, res, next) {
 			var dbconnection = require('../../routes/dbconnection.js');
 
 			if(rdBuscar_p_codigo == 'true'){//si el tipo de busqueda es por codigo
-				if(!isNaN(intxt_buscar_item)){
+				if(!isNaN(intxt_buscar_item) && !isNaN(intxt_buscar_item_grupo)){
 					//CALL `sdan002`.`sp_get_op_t_items`(<{p_codigo int}>, <{p_sort char(20)}>);
-					var str_query = 'CALL sp_get_op_t_items(' + intxt_buscar_item + ',\'CODIGO\');';
+					var str_query = 'CALL sp_get_op_t_items(' + intxt_buscar_item_grupo + ','+ intxt_buscar_item + ',\'CODIGO\');';
 				}else{
 					res.json({tran_error: 9,tran_mensaje: 'Debe ingresar un numero para buscar por código' , items: [] });
 					return false;

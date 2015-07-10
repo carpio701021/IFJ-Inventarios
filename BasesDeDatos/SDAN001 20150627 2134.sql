@@ -772,12 +772,15 @@ BEGIN
    -- 
    IF p_fk_grupo = 0 and p_codigo = 0 THEN
       IF p_sort = 'CODIGO' THEN
-         SELECT * FROM op_t_items ORDER BY fk_grupo, codigo;
+         SELECT *, IFNULL((select descripcion from op_t_grupo where op_t_grupo.codigo = op_t_items.fk_grupo),'ERROR: NO Existe el GRUPO') as NOMBRE_GRUPO 
+            FROM op_t_items ORDER BY fk_grupo, codigo;
       ELSE
-         SELECT * FROM op_t_items ORDER BY Descripcion;
+         SELECT *, IFNULL((select descripcion from op_t_grupo where op_t_grupo.codigo = op_t_items.fk_grupo),'ERROR: NO Existe el GRUPO') as NOMBRE_GRUPO
+            FROM op_t_items ORDER BY Descripcion;
       END IF;
    ELSE
-      SELECT * FROM op_t_items WHERE fk_grupo = p_fk_grupo and codigo = p_codigo;
+      SELECT *, IFNULL((select descripcion from op_t_grupo where op_t_grupo.codigo = op_t_items.fk_grupo),'ERROR: NO Existe el GRUPO') as NOMBRE_GRUPO 
+         FROM op_t_items WHERE fk_grupo = p_fk_grupo and codigo = p_codigo;
    END IF;
 END $$
 /*!50003 SET SESSION SQL_MODE=@TEMP_SQL_MODE */  $$

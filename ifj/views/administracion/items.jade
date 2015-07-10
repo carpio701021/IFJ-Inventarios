@@ -28,14 +28,18 @@ block content
 			p
 		p
 		#busquedas(style="max-width:400px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
-			form(action='javascript:void(0);')
+			form(id='formulario_buscar_item' action='javascript:void(0);')
 				h3 Búsqueda
-				input(style="width:95%;",type='text', name='intxt_buscar_elemento', id='intxt_buscar_elemento', placeholder='buscar por código de elemento', required='')
+				div
+					input(style="width:95%;",type='text', name='intxt_buscar_item_grupo', id='intxt_buscar_item_grupo', placeholder='grupo de item', required='')
 				br
-				input(type='radio', name='rdBuscar', id='rdBuscar_p_codigo', value='codigo', checked='' ,onClick='intxt_buscar_elemento.placeholder="buscar por código de elemento";')
-				text por código
+				div
+					input(style="width:95%;",type='text', name='intxt_buscar_item', id='intxt_buscar_item', placeholder='código de item', required='')
 				br
-				input(type='radio', name='rdBuscar', id='rdBuscar_p_descripcion', value='descripcion', onClick='intxt_buscar_elemento.placeholder="buscar en descripción de elemento";')
+				input(type='radio', name='rdBuscar', id='rdBuscar_p_codigo', value='codigo', checked='' ,onClick='intxt_buscar_item.value="";intxt_buscar_item_grupo.value="";intxt_buscar_item_grupo.style.display="block";intxt_buscar_item.placeholder="código de item";')
+				text por grupo y código
+				br
+				input(type='radio', name='rdBuscar', id='rdBuscar_p_descripcion', value='descripcion', onClick='intxt_buscar_item.value="";intxt_buscar_item_grupo.style.display="none";intxt_buscar_item.placeholder="buscar en descripción de item";')
 				text en descripcion
 				br
 				input(style="width:100%;",type='submit', id='btn_buscar_elementos', value='Buscar', onClick='onClickBtnBuscarElementos();')

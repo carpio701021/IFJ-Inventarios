@@ -360,9 +360,16 @@ var onClickBtnCambiarElemento = function(){
 }
 
 var onClickBtnBuscarElementos = function(){
-	if (intxt_buscar_elemento.value == '' ) return false;
+	if(!formulario_buscar_item.checkValidity()) {
+		if (!(typeof formulario_buscar_item.checkValidity == "function")) {
+			alert('Uno o varios campos no es válido.\nFavor revisar formulario.');
+		}
+		return;
+	}
+	if (intxt_buscar_item.value == '' || intxt_buscar_item_grupo.value == '' ) return false;
 	var data = '';
-	data+='intxt_buscar_elemento=' + intxt_buscar_elemento.value + '&';
+	data+='intxt_buscar_item=' + intxt_buscar_item.value + '&';
+	data+='intxt_buscar_item_grupo=' + intxt_buscar_item_grupo.value + '&';
 	data+='rdBuscar_p_codigo=' + rdBuscar_p_codigo.checked ;
 
 	var requestABC ;
@@ -379,7 +386,7 @@ var onClickBtnBuscarElementos = function(){
 				var respuesta = JSON.parse(requestABC.responseText);
 				if(respuesta.tran_error == 0 ) {
 					titulo = respuesta.tran_mensaje;
-					elementos_res_busqueda = respuesta.elementos;
+					elementos_res_busqueda = respuesta.items;
 					cargarLista(elementos_res_busqueda,titulo);
 					//ocultar y mostrar
 					seclistelementos.style.display="block";
@@ -391,7 +398,7 @@ var onClickBtnBuscarElementos = function(){
 				}else mensajeErrorGeneral();					
 			}else mensajeErrorGeneral(); 
 	}
-	requestABC.open("POST","/administracion/elementos/busqueda",true);
+	requestABC.open("POST","/administracion/items/busqueda",true);
 	requestABC.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 	requestABC.send(data);
 }
