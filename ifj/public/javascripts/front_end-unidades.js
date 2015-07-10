@@ -53,7 +53,7 @@ var cargarLista = function(lista_elementos,titulo_tabla){
 
 var onClickBtnMostrarTodos = function(){
 	//ocultar y mostrar
-	cargarLista(elementos,'Todos las unidade de medida');
+	cargarLista(elementos,'Todas las unidades de medida');
 	seclistelementos.style.display="block";
 	nuevoElemento.style.display="none";
 	opciones.style.display="none";

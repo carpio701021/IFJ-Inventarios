@@ -53,9 +53,14 @@ router.post('/', function(req, res) {
 
 	var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-	console.log('Se ha logueado un usuario con ip: '+ip);
+	console.log('Logueo con ip: '+ip);
 
-	
+	if(!(req.body.c_cliente && req.body.c_user && req.body.password)){
+		return res.render('userlogin', { 
+			title: 'Iniciar Sesión',
+			error: 'Debe llenar todas las casillas'
+		});
+	}
 	//Metodo que realiza la consulta a la base de datos y devuelve:
     //(login_error, login_mensaje, login_nombre_cliente, login_usuario_nombre, login_server, login_DB)
     var str_query = 'CALL sp_tran_web_login('+req.body.c_cliente+','+req.body.c_user+',\''+req.body.password+'\', '+'\''+ip+'\''+');';

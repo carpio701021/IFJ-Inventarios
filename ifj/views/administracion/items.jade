@@ -1,0 +1,377 @@
+extends ../basic
+
+block scripts
+	script(languaje='javascript',src='/javascripts/front_end-items.js')
+
+	script.
+		var elementos = !{items};
+		var grupos = !{grupos};
+
+		
+block adminli
+	li#adminli.active
+		a(href='/administracion/')
+			span Administración
+
+
+
+block content
+	p
+	h2 Administración de items
+	section#opciones.container(style="max-width:85%;padding:5px;text-align:center")
+		#btnsOpciones(style=" max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+			h3 Opciones
+			input(style="width:100%;",type='submit', value='Mostrar todos', id='btnMostrarTodos' onClick='onClickBtnMostrarTodosG()')
+			br
+			br
+			input(style="width:100%;",type='submit', value='Nuevo', id='btnNuevo', onClick='onClickBtnMostrarNuevoElemento()')
+			p
+		p
+		#busquedas(style="max-width:300px;width:85%;display:inline-block;margin:0 auto; overflow:hidden;padding: 0px 5%;")
+			form(action='javascript:void(0);')
+				h3 Búsqueda
+				input(style="width:95%;",type='text', name='intxt_buscar_elemento', id='intxt_buscar_elemento', placeholder='buscar por código de elemento', required='')
+				br
+				input(type='radio', name='rdBuscar', id='rdBuscar_p_codigo', value='codigo', checked='' ,onClick='intxt_buscar_elemento.placeholder="buscar por código de elemento";')
+				text por código
+				br
+				input(type='radio', name='rdBuscar', id='rdBuscar_p_descripcion', value='descripcion', onClick='intxt_buscar_elemento.placeholder="buscar en descripción de elemento";')
+				text en descripcion
+				br
+				input(style="width:100%;",type='submit', id='btn_buscar_elementos', value='Buscar', onClick='onClickBtnBuscarElementos();')
+
+			br
+			br
+			br
+
+	p
+
+	section#seclistelementos.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		br
+		br
+		h3(id='seclistelementos_titulo')
+		input(type='submit', value='Regresar', style='width:100%', onClick="onClickBtnMostrarMenu()")
+		br
+		br
+		div#divlistadoelementos.tabla_listado(style="z-index:0")
+		br
+		br
+		input(type='submit', value='Regresar', style='width:100%', onClick="onClickBtnMostrarMenu()")
+		p
+
+
+	section#nuevoElemento.container(style="max-width:85%;padding:5px;display:none;")
+		form.row(action='javascript:void(0);',id='formulario_nuevo_item')
+			h3 Nuevo Item
+			div.row
+				label.col-1-2(for='codigo_grupo_elemento_agregar')
+					b Grupo:
+				select.col-1-2(id='codigo_grupo_elemento_agregar', required='') 
+					option(value='', disabled selected, style='color:gray;') seleccione un grupo
+					each grupo,index in gruposO
+						option(value='#{grupo.Codigo}') Grupo #{grupo.Codigo}, #{grupo.Descripcion}
+
+			div.row
+				label.col-1-2(for='codigo_elemento_agregar') 
+					b Código Item:
+				input.col-1-2(type='number', name='codigo_elemento_agregar', id='codigo_elemento_agregar', placeholder='código de item', required='')
+
+			div.row
+				label.col-1-2(for='descripcion_elemento_agregar') 
+					b Descripción:
+				input.col-1-2(type='text',title='Máximo 60 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,60}$' name='descripcion_elemento_agregar', id='descripcion_elemento_agregar', placeholder='descripcion', required='')
+
+			div.row
+				label.col-1-2(for='codigo_barras_elemento_agregar') 
+					b Código de barras:
+				input.col-1-2(type='number',title='Máximo de 10 dígitos',min='0', max='9999999999', name='codigo_barras_elemento_agregar', id='codigo_barras_elemento_agregar', placeholder='código de barras')
+			
+			div.row
+				label.col-1-2(for='cuenta_elemento_agregar') 
+					b Cuenta Contable:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='cuenta_elemento_agregar', id='cuenta_elemento_agregar', placeholder='cuenta contable')
+			
+			div.row
+				label.col-1-2(for='precio_costo_elemento_agregar') 
+					b Precio de Costo:
+				input.col-1-2(type='number', name='precio_costo_elemento_agregar', id='precio_costo_elemento_agregar', placeholder='Precio de Costo', value=0)
+			
+			div.row
+				label.col-1-2(for='combo_elemento_agregar') 
+					b Combo:
+				select.col-1-2(id='combo_elemento_agregar', required='') 
+					option(value='N') No
+					option(value='S') Si
+			
+			div.row
+				label.col-1-2(for='tipo_elemento_agregar') 
+					b Tipo:
+				select.col-1-2(id='tipo_elemento_agregar', required='') 
+					option(value='P') Producto
+					option(value='S') Servicio
+
+			div.row
+				label.col-1-2(for='unidad_de_medida_elemento_agregar') 
+					b Unidad de medida:
+				select.col-1-2(id='unidad_de_medida_elemento_agregar', required='') 
+					option(value='', disabled selected, style='color:gray;') seleccione una unidad de medida
+					each udm in unidades_de_medidaO
+						option(value='#{udm.Codigo}') #{udm.Codigo}
+
+			div.row
+				label.col-1-2(for='existencia_elemento_agregar') 
+					b Existencia:
+				input.col-1-2(type='number',min='0', name='existencia_elemento_agregar', id='existencia_elemento_agregar', value=0, required='')
+			
+			//div.row
+				label.col-1-2(for='decimales_elemento_agregar') 
+					b Numero de decimales:
+				input.col-1-2(type='number',min='0',max='4',step='2', name='decimales_elemento_agregar', id='decimales_elemento_agregar', placeholder='Numero de decimales', required='')
+			
+			div.row
+				label.col-1-2(for='precio1_elemento_agregar') 
+					b Precio de venta 1:
+				input.col-1-2(type='number',title='Precio mayor a 0',min='.01',step='0.01', name='precio1_elemento_agregar', id='precio1_elemento_agregar', placeholder='Precio de venta 1',value=0, required='')
+			
+			div.row
+				label.col-1-2(for='precio2_elemento_agregar') 
+					b Precio de venta 2:
+				input.col-1-2(type='number', name='precio2_elemento_agregar', id='precio2_elemento_agregar', placeholder='Precio de venta 2',value=0)
+			
+			div.row
+				label.col-1-2(for='precio3_elemento_agregar') 
+					b Precio de venta 3:
+				input.col-1-2(type='number', name='precio3_elemento_agregar', id='precio3_elemento_agregar', placeholder='Precio de venta 3',value=0)
+			
+			div.row
+				label.col-1-2(for='precio4_elemento_agregar') 
+					b Precio de venta 4:
+				input.col-1-2(type='number', name='precio4_elemento_agregar', id='precio4_elemento_agregar', placeholder='Precio de venta 4',value=0)
+			
+			div.row
+				label.col-1-2(for='permite_descuento_elemento_agregar') 
+					b Permite descuento:
+				select.col-1-2(id='permite_descuento_elemento_agregar', required='') 
+					option(value='N') No
+					option(value='S') Sí
+			
+			div.row
+				label.col-1-2(for='maximo_descuento_elemento_agregar') 
+					b Máximo descuento:
+				input.col-1-2(type='number',min='0', name='maximo_descuento_elemento_agregar', id='maximo_descuento_elemento_agregar', placeholder='Máximo descuento')
+			
+			div.row
+				label.col-1-2(for='control_posicion_elemento_agregar') 
+					b Control por posición:
+				select.col-1-2(id='control_posicion_elemento_agregar', required='') 
+					option(value='N') No
+					option(value='S') Sí
+			
+			div.row
+				label.col-1-2(for='estanteria_elemento_agregar') 
+					b Estantería:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='estanteria_elemento_agregar', id='estanteria_elemento_agregar', placeholder='Estantería')
+			
+			div.row
+				label.col-1-2(for='tramo_elemento_agregar') 
+					b Tramo:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='tramo_elemento_agregar', id='tramo_elemento_agregar', placeholder='Tramo')
+			
+			div.row
+				label.col-1-2(for='nivel_elemento_agregar') 
+					b Nivel:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='nivel_elemento_agregar', id='nivel_elemento_agregar', placeholder='Nivel')
+			
+			div.row
+				label.col-1-2(for='caja_elemento_agregar') 
+					b Caja:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='caja_elemento_agregar', id='caja_elemento_agregar', placeholder='Caja')
+			
+			div.row
+				label.col-1-2(for='referencia_elemento_agregar') 
+					b Referencia:
+				input.col-1-2(type='text',title='Máximo 20 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,20}$', name='referencia_elemento_agregar', id='referencia_elemento_agregar', placeholder='Referencia')
+			
+
+
+
+			div.row
+				label.col-1-2(for='estado_elemento_agregar') 
+					b Estado:
+				select.col-1-2(id='estado_elemento_agregar', required='') 
+					option(value='I', selected) Inactivo
+					option(value='A') Activo
+			br
+			br
+			div#msj_error_nuevo_item(display='none')
+				h4#msj_error_nuevo_item_txt(style="color:red;") mensaje error
+				br
+				br
+			input(style='max-width:300px;width:85%;',type='submit', value='Registrar nuevo item', onClick="onClickBtnAgregarElemento()")
+			br
+			br
+			input(style='max-width:300px;width:85%;',type='submit', value='Cancelar', onClick="onClickBtnCancelar()")
+			p
+
+
+	section#cambiarElemento.container(style="max-width:85%;padding:5px;display:none;")
+		form.row(action='javascript:void(0);',id='formulario_cambiar_item')
+			h3 Modificar Item
+			div.row
+				label.col-1-2(for='codigo_grupo_elemento_cambiar')
+					b Grupo:
+				select.col-1-2(id='codigo_grupo_elemento_cambiar', required='') 
+					option(value='', disabled selected, style='color:gray;') seleccione un grupo
+					each grupo,index in gruposO
+						option(value='#{grupo.Codigo}') Grupo #{grupo.Codigo}, #{grupo.Descripcion}
+
+			div.row
+				label.col-1-2(for='codigo_elemento_cambiar') 
+					b Código Item:
+				input.col-1-2(type='number', readOnly, name='codigo_elemento_cambiar', id='codigo_elemento_cambiar', placeholder='código de item', required='')
+
+			div.row
+				label.col-1-2(for='descripcion_elemento_cambiar') 
+					b Descripción:
+				input.col-1-2(type='text',title='Máximo 60 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,60}$' name='descripcion_elemento_cambiar', id='descripcion_elemento_cambiar', placeholder='descripcion', required='')
+
+			div.row
+				label.col-1-2(for='codigo_barras_elemento_cambiar') 
+					b Código de barras:
+				input.col-1-2(type='number',title='Máximo de 10 dígitos',min='0', max='9999999999', name='codigo_barras_elemento_cambiar', id='codigo_barras_elemento_cambiar', placeholder='código de barras')
+			
+			div.row
+				label.col-1-2(for='cuenta_elemento_cambiar') 
+					b Cuenta Contable:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='cuenta_elemento_cambiar', id='cuenta_elemento_cambiar', placeholder='cuenta contable')
+			
+			div.row
+				label.col-1-2(for='precio_costo_elemento_cambiar') 
+					b Precio de Costo:
+				input.col-1-2(type='number', name='precio_costo_elemento_cambiar', id='precio_costo_elemento_cambiar', placeholder='Precio de Costo', value=0)
+			
+			div.row
+				label.col-1-2(for='combo_elemento_cambiar') 
+					b Combo:
+				select.col-1-2(id='combo_elemento_cambiar', required='') 
+					option(value='N') No
+					option(value='S') Si
+			
+			div.row
+				label.col-1-2(for='tipo_elemento_cambiar') 
+					b Tipo:
+				select.col-1-2(id='tipo_elemento_cambiar', required='') 
+					option(value='P') Producto
+					option(value='S') Servicio
+
+			div.row
+				label.col-1-2(for='unidad_de_medida_elemento_cambiar') 
+					b Unidad de medida:
+				select.col-1-2(id='unidad_de_medida_elemento_cambiar', required='') 
+					option(value='', disabled selected, style='color:gray;') seleccione una unidad de medida
+					each udm in unidades_de_medidaO
+						option(value='#{udm.Codigo}') #{udm.Codigo}
+
+			div.row
+				label.col-1-2(for='existencia_elemento_cambiar') 
+					b Existencia:
+				input.col-1-2(type='number', readOnly,min='0', name='existencia_elemento_cambiar', id='existencia_elemento_cambiar', value=0, required='')
+			
+			//div.row
+				label.col-1-2(for='decimales_elemento_cambiar') 
+					b Numero de decimales:
+				input.col-1-2(type='number',min='0',max='4',step='2', name='decimales_elemento_cambiar', id='decimales_elemento_cambiar', placeholder='Numero de decimales', required='')
+			
+			div.row
+				label.col-1-2(for='precio1_elemento_cambiar') 
+					b Precio de venta 1:
+				input.col-1-2(type='number',title='Precio mayor a 0',min='.01',step='0.01', name='precio1_elemento_cambiar', id='precio1_elemento_cambiar', placeholder='Precio de venta 1',value=0, required='')
+			
+			div.row
+				label.col-1-2(for='precio2_elemento_cambiar') 
+					b Precio de venta 2:
+				input.col-1-2(type='number', name='precio2_elemento_cambiar', id='precio2_elemento_cambiar', placeholder='Precio de venta 2',value=0)
+			
+			div.row
+				label.col-1-2(for='precio3_elemento_cambiar') 
+					b Precio de venta 3:
+				input.col-1-2(type='number', name='precio3_elemento_cambiar', id='precio3_elemento_cambiar', placeholder='Precio de venta 3',value=0)
+			
+			div.row
+				label.col-1-2(for='precio4_elemento_cambiar') 
+					b Precio de venta 4:
+				input.col-1-2(type='number', name='precio4_elemento_cambiar', id='precio4_elemento_cambiar', placeholder='Precio de venta 4',value=0)
+			
+			div.row
+				label.col-1-2(for='permite_descuento_elemento_cambiar') 
+					b Permite descuento:
+				select.col-1-2(id='permite_descuento_elemento_cambiar', required='') 
+					option(value='N') No
+					option(value='S') Sí
+			
+			div.row
+				label.col-1-2(for='maximo_descuento_elemento_cambiar') 
+					b Máximo descuento:
+				input.col-1-2(type='number',min='0', name='maximo_descuento_elemento_cambiar', id='maximo_descuento_elemento_cambiar', placeholder='Máximo descuento')
+			
+			div.row
+				label.col-1-2(for='control_posicion_elemento_cambiar') 
+					b Control por posición:
+				select.col-1-2(id='control_posicion_elemento_cambiar', required='') 
+					option(value='N') No
+					option(value='S') Sí
+			
+			div.row
+				label.col-1-2(for='estanteria_elemento_cambiar') 
+					b Estantería:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='estanteria_elemento_cambiar', id='estanteria_elemento_cambiar', placeholder='Estantería')
+			
+			div.row
+				label.col-1-2(for='tramo_elemento_cambiar') 
+					b Tramo:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='tramo_elemento_cambiar', id='tramo_elemento_cambiar', placeholder='Tramo')
+			
+			div.row
+				label.col-1-2(for='nivel_elemento_cambiar') 
+					b Nivel:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='nivel_elemento_cambiar', id='nivel_elemento_cambiar', placeholder='Nivel')
+			
+			div.row
+				label.col-1-2(for='caja_elemento_cambiar') 
+					b Caja:
+				input.col-1-2(type='text',title='Máximo 10 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,10}$', name='caja_elemento_cambiar', id='caja_elemento_cambiar', placeholder='Caja')
+			
+			div.row
+				label.col-1-2(for='referencia_elemento_cambiar') 
+					b Referencia:
+				input.col-1-2(type='text',title='Máximo 20 caracteres (solo letras)',pattern='^[\ a-zA-Z0-9áéíóúÁÉÍÓÚ]{0,20}$', name='referencia_elemento_cambiar', id='referencia_elemento_cambiar', placeholder='Referencia')
+			
+
+
+
+			div.row
+				label.col-1-2(for='estado_elemento_cambiar') 
+					b Estado:
+				select.col-1-2(id='estado_elemento_cambiar', required='') 
+					option(value='I', selected) Inactivo
+					option(value='A') Activo
+			br
+			br
+			input(style='max-width:300px;width:85%;',type='submit', value='Guardar cambios', onClick="onClickBtnCambiarElemento()")
+			br
+			br
+			input(style='max-width:300px;width:85%;',type='submit', value='Cancelar', onClick="onClickBtnCancelar()")
+			p
+
+
+
+	section#mensajes.container(style="max-width:85%;padding:5px;text-align:center;display:none;")
+		h3(id='titulo_mensajes_operaciones')
+		label(id='mensajes_operaciones')
+		br
+		br
+		input(style="max-width:300px;width:85%;",type='submit',value='Regresar' onClick="onClickBtnMostrarMenu()")
+		p
+
+
+	
